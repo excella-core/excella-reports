@@ -33,19 +33,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.Format;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.SimpleFormatter;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFSheetConditionalFormatting;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
@@ -73,8 +68,6 @@ import org.bbreak.excella.reports.tag.ReportsTagParser;
 import org.bbreak.excella.reports.tag.RowRepeatParamParser;
 import org.bbreak.excella.reports.tag.SingleParamParser;
 import org.junit.Test;
-
-import com.sun.star.io.IOException;
 
 /**
  * {@link org.bbreak.excella.reports.util.ReportsUtil} のためのテスト・クラス。
