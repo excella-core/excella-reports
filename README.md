@@ -36,13 +36,13 @@ http://sourceforge.jp/projects/excella-reports/
 
 4. 更新履歴  
 -------------
-  ・2014/08/18 Version 1.6 リリース
-  ・2013/03/18 Version 1.5 リリース
-  ・2010/11/19 Version 1.4 リリース
-  ・2010/01/20 Version 1.3 リリース
-  ・2009/11/20 Version 1.2 リリース
-  ・2009/10/30 Version 1.1 リリース
-  ・2009/06/25 Version 1.0 リリース
+* 2014/08/18 Version 1.6 リリース
+* 2013/03/18 Version 1.5 リリース
+* 2010/11/19 Version 1.4 リリース
+* 2010/01/20 Version 1.3 リリース
+* 2009/11/20 Version 1.2 リリース
+* 2009/10/30 Version 1.1 リリース
+* 2009/06/25 Version 1.0 リリース
 
 
 Copyright 2009 by bBreak Systems.
