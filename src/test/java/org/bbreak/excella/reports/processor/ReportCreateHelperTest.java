@@ -34,7 +34,6 @@ import static org.junit.Assert.fail;
 import java.util.Map;
 
 import org.bbreak.excella.reports.exporter.ExcelExporter;
-import org.bbreak.excella.reports.exporter.OoPdfExporter;
 import org.bbreak.excella.reports.exporter.ReportBookExporter;
 import org.bbreak.excella.reports.tag.BlockColRepeatParamParser;
 import org.bbreak.excella.reports.tag.BlockRowRepeatParamParser;
@@ -93,8 +92,6 @@ public class ReportCreateHelperTest {
         for ( ReportBookExporter exporter : exporters.values()) {
             if ( exporter.getFormatType().equals( ExcelExporter.FORMAT_TYPE)) {
                 assertTrue( exporter instanceof ExcelExporter);
-            } else if ( exporter.getFormatType().equals( OoPdfExporter.FORMAT_TYPE)) {
-                assertTrue( exporter instanceof OoPdfExporter);
             } else {
                 fail( "デフォルトでないパーサー有");
             }

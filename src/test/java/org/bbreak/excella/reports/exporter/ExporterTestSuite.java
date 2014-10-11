@@ -39,12 +39,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
     ExcelExporterTest.class,
-    OoPdfExporterTest.class,
     ReportBookExporterTest.class,
     XLSExporterTest.class,
     XLSXExporterTest.class,
     ExcelOutputStreamExporterTest.class,
-    OoPdfOutputStreamExporterTest.class
 })
 public class ExporterTestSuite {
 

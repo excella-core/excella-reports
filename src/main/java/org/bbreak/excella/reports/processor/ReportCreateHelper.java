@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bbreak.excella.reports.exporter.ExcelExporter;
-import org.bbreak.excella.reports.exporter.OoPdfExporter;
 import org.bbreak.excella.reports.exporter.ReportBookExporter;
 import org.bbreak.excella.reports.tag.BlockColRepeatParamParser;
 import org.bbreak.excella.reports.tag.BlockRowRepeatParamParser;
@@ -89,7 +88,6 @@ public final class ReportCreateHelper {
     /**
      * デフォルトのエクスポーターを生成する。
      * <li>{@link org.bbreak.excella.reports.exporter.ExcelExporter ExcelExporter}</li>
-     * <li>{@link org.bbreak.excella.reports.exporter.OoPdfExporter OoPdfExporter}</li>
      * 
      * @return 生成されたデフォルトエクスポーター
      */
@@ -99,7 +97,6 @@ public final class ReportCreateHelper {
 
         // デフォルト作成
         exporters.put( ExcelExporter.FORMAT_TYPE, new ExcelExporter());
-        exporters.put( OoPdfExporter.FORMAT_TYPE, new OoPdfExporter());
 
         return exporters;
 
