@@ -18,6 +18,13 @@
 		</plugin>
   	</plugins>
   </build>
+  <repositories>
+    <repository>
+	  <id>excella.bbreak.jp</id>
+      <name>bBreak Systems Excella</name>
+      <url>http://excella-core.github.io/maven/</url>    
+    </repository>
+  </repositories>
   <dependencies>
   	<dependency>
   		<groupId>org.bbreak.excella</groupId>
