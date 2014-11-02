@@ -88,7 +88,7 @@ public class ReportCreateHelperTest {
         // デフォルト
         Map<String, ReportBookExporter> exporters = ReportCreateHelper.createDefaultExporters();
 
-        assertEquals( 2, exporters.size());
+        assertEquals( 1, exporters.size());
         for ( ReportBookExporter exporter : exporters.values()) {
             if ( exporter.getFormatType().equals( ExcelExporter.FORMAT_TYPE)) {
                 assertTrue( exporter instanceof ExcelExporter);
