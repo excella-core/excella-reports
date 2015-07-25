@@ -1,9 +1,5 @@
 Excella Reports
 ===============
-ソースコード管理をGitHubへ移行中です。
-最新の情報はこちらをご覧ください。
-
-http://sourceforge.jp/projects/excella-reports/
 
 1. ExCella Reportsとは  
 ---------------------
@@ -48,6 +44,7 @@ mavenの依存ライブラリとして追加する場合、pom.xmlに下記の�
 
 5. 更新履歴  
 -------------
+* 2015/07/25 Version 1.7 リリース
 * 2014/08/18 Version 1.6 リリース
 * 2013/03/18 Version 1.5 リリース
 * 2010/11/19 Version 1.4 リリース
