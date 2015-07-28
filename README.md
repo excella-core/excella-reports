@@ -5,6 +5,9 @@ Excella Reports
 ---------------------
 
   ExCella ReportsはExcelファイルをテンプレートとし、Excel形式またはPDF形式の帳票を作成する帳票ツールです。
+  
+  リファレンス、Javadocは、こちらからご覧いただけます。
+  http://excella-core.github.io/
 
   ExCella Reportsは株式会社ビーブレイクシステムズが
   作成したオープンソースソフトウェアです。
