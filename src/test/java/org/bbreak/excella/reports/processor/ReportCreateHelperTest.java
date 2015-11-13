@@ -37,6 +37,7 @@ import org.bbreak.excella.reports.exporter.ExcelExporter;
 import org.bbreak.excella.reports.exporter.ReportBookExporter;
 import org.bbreak.excella.reports.tag.BlockColRepeatParamParser;
 import org.bbreak.excella.reports.tag.BlockRowRepeatParamParser;
+import org.bbreak.excella.reports.tag.BreakParamParser;
 import org.bbreak.excella.reports.tag.ColRepeatParamParser;
 import org.bbreak.excella.reports.tag.ImageParamParser;
 import org.bbreak.excella.reports.tag.RemoveParamParser;
@@ -58,7 +59,7 @@ public class ReportCreateHelperTest {
         // デフォルト
         Map<String, ReportsTagParser<?>> parsers = ReportCreateHelper.createDefaultParsers();
 
-        assertEquals( 8, parsers.size());
+        assertEquals( 9, parsers.size());
         for ( ReportsTagParser<?> parser : parsers.values()) {
             if ( parser.getTag().equals( SingleParamParser.DEFAULT_TAG)) {
                 assertTrue( parser instanceof SingleParamParser);
@@ -76,6 +77,8 @@ public class ReportCreateHelperTest {
                 assertTrue( parser instanceof SumParamParser);
             } else if ( parser.getTag().equals( RemoveParamParser.DEFAULT_TAG)) {
                 assertTrue( parser instanceof RemoveParamParser);
+            } else if ( parser.getTag().equals( BreakParamParser.DEFAULT_TAG)) {
+                assertTrue( parser instanceof BreakParamParser);
             } else {
                 fail( "デフォルトでないパーサー有");
             }

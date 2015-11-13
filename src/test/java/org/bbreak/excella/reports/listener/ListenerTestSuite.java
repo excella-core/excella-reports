@@ -38,7 +38,8 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    RemoveAdapterTest.class
+    RemoveAdapterTest.class,
+    BreakAdapterTest.class
 })
 public class ListenerTestSuite {
 
