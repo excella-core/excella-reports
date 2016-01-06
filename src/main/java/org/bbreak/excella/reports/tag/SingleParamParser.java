@@ -145,6 +145,9 @@ public class SingleParamParser extends ReportsTagParser<Object> {
         if ( paramValues.size() > 1) {
             StringBuilder builder = new StringBuilder();
             for ( Object object : paramValues) {
+                if ( object == null) {
+                    continue;
+                }
                 if ( object instanceof Date) {
                     SimpleDateFormat sdf = new SimpleDateFormat( "yyyy/MM/dd");
                     builder.append( sdf.format( object));
