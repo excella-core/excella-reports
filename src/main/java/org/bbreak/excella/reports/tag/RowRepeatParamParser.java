@@ -341,17 +341,14 @@ public class RowRepeatParamParser extends ReportsTagParser<Object[]> {
                 }
 
                 // ■改ページオプション指定
-                if ( cell instanceof HSSFCell) {
-                    // TODO XSSFのRowBreakは正常に動作しないため、HSSFのみ
-                    if ( !skipRow) {
-                        if ( breakNum != null && valueIndex != 0 && valueIndex % breakNum == 0) {
-                            // データ数により改ページする場合
-                            sheet.setRowBreak( row.getRowNum() - 1);
-                        }
-                        if ( changeBreak && valueIndex != 0 && !duplicateValue) {
-                            // 値変更により改ページする場合
-                            sheet.setRowBreak( row.getRowNum() - 1);
-                        }
+                if ( !skipRow) {
+                    if ( breakNum != null && valueIndex != 0 && valueIndex % breakNum == 0) {
+                        // データ数により改ページする場合
+                        sheet.setRowBreak( row.getRowNum() - 1);
+                    }
+                    if ( changeBreak && valueIndex != 0 && !duplicateValue) {
+                        // 値変更により改ページする場合
+                        sheet.setRowBreak( row.getRowNum() - 1);
                     }
                 }
 
