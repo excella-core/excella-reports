@@ -45,7 +45,8 @@ import org.junit.runners.Suite.SuiteClasses;
     RemoveParamParserTest.class,
     SumParamParserTest.class,
     BlockColRepeatParamParserTest.class,
-    BlockRowRepeatParamParserTest.class
+    BlockRowRepeatParamParserTest.class,
+    BreakParamParserTest.class
 })
 public class TagTestSuite {
 

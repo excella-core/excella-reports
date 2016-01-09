@@ -49,6 +49,7 @@ import org.bbreak.excella.core.exception.ExportException;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.core.exporter.book.BookExporter;
 import org.bbreak.excella.reports.exporter.ReportBookExporter;
+import org.bbreak.excella.reports.listener.BreakAdapter;
 import org.bbreak.excella.reports.listener.RemoveAdapter;
 import org.bbreak.excella.reports.listener.ReportProcessListener;
 import org.bbreak.excella.reports.model.ConvertConfiguration;
@@ -145,6 +146,7 @@ public class ReportProcessor {
         }
         // リスナーの設定
         controller.addSheetParseListener( new RemoveAdapter());
+        controller.addSheetParseListener( new BreakAdapter());
         for ( ReportProcessListener listener : listeners) {
             controller.addSheetParseListener( listener);
         }

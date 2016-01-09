@@ -34,6 +34,7 @@ import org.bbreak.excella.reports.exporter.ExcelExporter;
 import org.bbreak.excella.reports.exporter.ReportBookExporter;
 import org.bbreak.excella.reports.tag.BlockColRepeatParamParser;
 import org.bbreak.excella.reports.tag.BlockRowRepeatParamParser;
+import org.bbreak.excella.reports.tag.BreakParamParser;
 import org.bbreak.excella.reports.tag.ColRepeatParamParser;
 import org.bbreak.excella.reports.tag.ImageParamParser;
 import org.bbreak.excella.reports.tag.RemoveParamParser;
@@ -65,6 +66,7 @@ public final class ReportCreateHelper {
      * <li>{@link org.bbreak.excella.reports.tag.BlockColRepeatParamParser BlockColRepeatParamParser}</li>
      * <li>{@link org.bbreak.excella.reports.tag.SumParamParser SumParamParser}</li>
      * <li>{@link org.bbreak.excella.reports.tag.RemoveParamParser RemoveParamPaser}</li>
+     * <li>{@link org.bbreak.excella.reports.tag.BreakParamParser BreakParamPaser}</li>
      * 
      * @return 生成されたデフォルトタグパーサー
      */
@@ -81,6 +83,7 @@ public final class ReportCreateHelper {
         parsers.put( BlockColRepeatParamParser.DEFAULT_TAG, new BlockColRepeatParamParser());
         parsers.put( SumParamParser.DEFAULT_TAG, new SumParamParser());
         parsers.put( RemoveParamParser.DEFAULT_TAG, new RemoveParamParser());
+        parsers.put( BreakParamParser.DEFAULT_TAG , new BreakParamParser());
 
         return parsers;
     }
