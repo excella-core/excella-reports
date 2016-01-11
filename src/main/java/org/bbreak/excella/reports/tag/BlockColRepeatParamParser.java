@@ -470,11 +470,14 @@ public class BlockColRepeatParamParser extends ReportsTagParser<Object[]> {
                                 log.debug( "挿入範囲1 : " + tagCell.getRowIndex() + ":" + (targetRow - 1) + ":" + (beforeLastColIndex + 1) + ":" + blockEndColIndex);
                             }
                             // 処理中最終行に最終列以降に増えたセル数列挿入
-                            CellRangeAddress rangeAddress = new CellRangeAddress( blockEndRowIndex + 1, sheet.getLastRowNum(), beforeLastColIndex + 1, blockEndColIndex);
-                            PoiUtil.insertRangeRight( sheet, rangeAddress);
-                            if ( log.isDebugEnabled()) {
-                                log.debug( "***横補正***");
-                                log.debug( "挿入範囲3 : " + (blockEndRowIndex + 1) + ":" + sheet.getLastRowNum() + ":" + (beforeLastColIndex + 1) + ":" + blockEndColIndex);
+                            int lastRowNum = sheet.getLastRowNum();
+                            if ( (blockEndRowIndex + 1) <= lastRowNum && (beforeLastColIndex + 1) <= blockEndColIndex) {
+                                CellRangeAddress rangeAddress = new CellRangeAddress( blockEndRowIndex + 1, lastRowNum, beforeLastColIndex + 1, blockEndColIndex);
+                                PoiUtil.insertRangeRight( sheet, rangeAddress);
+                                if ( log.isDebugEnabled()) {
+                                    log.debug( "***横補正***");
+                                    log.debug( "挿入範囲3 : " + (blockEndRowIndex + 1) + ":" + lastRowNum + ":" + (beforeLastColIndex + 1) + ":" + blockEndColIndex);
+                                }
                             }
                         }
                         // 列ループ終わり
