@@ -43,9 +43,8 @@ public class PivotGraphReporter {
         URL templateFileUrl = PivotGraphReporter.class.getResource( templateFileName);
         String templateFilePath = URLDecoder.decode( templateFileUrl.getPath(), "UTF-8");
         
-        // TODO: 出力先のディレクトリ、及びファイル名(拡張子不要)を指定してください。
         String outputFileName = "ピボットグラフサンプル";
-        String outputFileDir = "C:/work/";
+        String outputFileDir = "./";
         String outputFilePath = outputFileDir.concat( outputFileName);
         ReportBook outputBook = new ReportBook( templateFilePath, outputFilePath, ExcelExporter.FORMAT_TYPE);
 

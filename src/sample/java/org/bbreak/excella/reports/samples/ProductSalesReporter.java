@@ -47,8 +47,7 @@ public class ProductSalesReporter {
         URL templateFileUrl = ProductSalesReporter.class.getResource( templateFileName);
         String templateFilePath = URLDecoder.decode( templateFileUrl.getPath(), "UTF-8");
 
-        // TODO: 出力先のディレクトリ、及びファイル名(拡張子不要)を指定してください。
-        String outputFileDir = "C:/reports_output/";
+        String outputFileDir = "./";
         String outputFileName1 = "商品売上実績(事業部Ⅰ)";
         String outputFileName2 = "商品売上実績(事業部Ⅱ)";
         String outputFilePath1 = outputFileDir.concat( outputFileName1);
