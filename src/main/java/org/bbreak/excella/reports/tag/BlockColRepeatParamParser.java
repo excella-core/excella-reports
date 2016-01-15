@@ -165,7 +165,6 @@ public class BlockColRepeatParamParser extends ReportsTagParser<Object[]> {
                     continue;
                 }
                 ParamInfo childParamInfo = new ParamInfo();
-                @SuppressWarnings( "unchecked")
                 Map<String, Object> map = PropertyUtils.describe( obj);
                 for ( Map.Entry<String, Object> entry : map.entrySet()) {
                     for ( ReportsTagParser<?> parser : singleParsers) {
@@ -249,8 +248,6 @@ public class BlockColRepeatParamParser extends ReportsTagParser<Object[]> {
             TagParser<?> parser = null;
 
             ParsedReportInfo result = null;
-
-            int totalPlusColNum = 0;
 
             // データループ
             for ( int repeatCount = 0; repeatCount < repeatNum; repeatCount++) {
@@ -492,7 +489,6 @@ public class BlockColRepeatParamParser extends ReportsTagParser<Object[]> {
                         }
                     }
 
-                    totalPlusColNum += plusColNum;
                     plusColNum = 0;
 
                     // 行ループ終わり

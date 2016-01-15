@@ -48,7 +48,6 @@ public class ReportBookExporterTest extends WorkbookTest {
 
     public ReportBookExporterTest( String version) {
         super( version);
-        // TODO Auto-generated constructor stub
     }
 
     /**

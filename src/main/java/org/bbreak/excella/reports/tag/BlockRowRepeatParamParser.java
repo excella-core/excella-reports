@@ -164,7 +164,6 @@ public class BlockRowRepeatParamParser extends ReportsTagParser<Object[]> {
                     continue;
                 }
                 ParamInfo childParamInfo = new ParamInfo();
-                @SuppressWarnings( "unchecked")
                 Map<String, Object> map = PropertyUtils.describe( obj);
                 for ( Map.Entry<String, Object> entry : map.entrySet()) {
                     for ( ReportsTagParser<?> parser : singleParsers) {

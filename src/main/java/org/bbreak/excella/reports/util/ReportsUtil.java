@@ -138,7 +138,6 @@ public final class ReportsUtil {
      * @param parsers 使用中のパーサ群
      * @return 置換変数文字列に対応する変換値リスト
      */
-    @SuppressWarnings( "unchecked")
     public static List<Object> getParamValues( ParamInfo info, String propertyNameString, List<ReportsTagParser<?>> parsers) {
 
         String[] levels = propertyNameString.split( "\\.");
