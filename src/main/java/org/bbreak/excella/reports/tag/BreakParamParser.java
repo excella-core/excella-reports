@@ -36,6 +36,7 @@ import org.bbreak.excella.reports.model.ParsedReportInfo;
  * 改ページするパーサー
  * 
  * @author T.Maruyama
+ * @version 1.8
  */
 public class BreakParamParser extends ReportsTagParser<Object> {
 

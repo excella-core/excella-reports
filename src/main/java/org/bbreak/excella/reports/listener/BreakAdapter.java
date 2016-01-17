@@ -41,6 +41,7 @@ import org.bbreak.excella.reports.tag.BreakParamParser;
  * 改ページの挿入
  * 
  * @author T.Maruyama
+ * @version 1.8
  */
 public class BreakAdapter extends ReportProcessAdaptor {
 
