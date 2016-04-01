@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,7 +71,7 @@ public class ReportProcessor {
      * キー：タグ名<BR>
      * 値：処理する帳票用タグパーサー
      */
-    private Map<String, ReportsTagParser<?>> parsers = new HashMap<String, ReportsTagParser<?>>();
+    private Map<String, ReportsTagParser<?>> parsers = new LinkedHashMap<String, ReportsTagParser<?>>();
 
     /**
      * エクスポーターMap<BR>

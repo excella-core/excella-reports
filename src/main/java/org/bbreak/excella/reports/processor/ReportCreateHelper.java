@@ -28,6 +28,7 @@
 package org.bbreak.excella.reports.processor;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.bbreak.excella.reports.exporter.ExcelExporter;
@@ -72,7 +73,7 @@ public final class ReportCreateHelper {
      */
     public static Map<String, ReportsTagParser<?>> createDefaultParsers() {
 
-        Map<String, ReportsTagParser<?>> parsers = new HashMap<String, ReportsTagParser<?>>();
+        Map<String, ReportsTagParser<?>> parsers = new LinkedHashMap<String, ReportsTagParser<?>>();
 
         // デフォルト作成
         parsers.put( SingleParamParser.DEFAULT_TAG, new SingleParamParser());
