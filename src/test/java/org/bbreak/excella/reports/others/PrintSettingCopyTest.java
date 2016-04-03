@@ -17,6 +17,7 @@ import org.bbreak.excella.reports.model.ReportBook;
 import org.bbreak.excella.reports.model.ReportSheet;
 import org.bbreak.excella.reports.processor.ReportProcessor;
 import org.bbreak.excella.reports.processor.ReportsCheckException;
+import org.bbreak.excella.reports.util.ReportsUtil;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -76,11 +77,7 @@ public class PrintSettingCopyTest {
         // Excel 2003形式
         printExcel( "印刷設定有テンプレート.xls", copyTemplate);
         // Excel 2007形式
-        // 
-        // POI3.9より、XSSFWorkbookのcloneSheetで印刷設定のコピーがサポートされていないため、
-        // ここのテストはコメントアウトしている
-        //
-        // printExcel( "印刷設定有テンプレート.xlsx", copyTemplate);
+        printExcel( "印刷設定有テンプレート.xlsx", copyTemplate);
     }
 
     private static void printPluralWithPrintSetting( boolean singleTempSheet) throws Exception {
@@ -91,15 +88,11 @@ public class PrintSettingCopyTest {
             printPluralExcel( "印刷設定有複数テンプレート.xls", singleTempSheet);
         }
         // Excel 2007形式で出力
-        // 
-        // POI3.9より、XSSFWorkbookのcloneSheetで印刷設定のコピーがサポートされていないため、
-        // ここのテストはコメントアウトしている
-        //
-        // if ( singleTempSheet) {
-        //     printPluralExcel( "印刷設定有テンプレート.xlsx", singleTempSheet);
-        // } else {
-        //     printPluralExcel( "印刷設定有複数テンプレート.xlsx", singleTempSheet);
-        // }
+        if ( singleTempSheet) {
+            printPluralExcel( "印刷設定有テンプレート.xlsx", singleTempSheet);
+        } else {
+            printPluralExcel( "印刷設定有複数テンプレート.xlsx", singleTempSheet);
+        }
     }
 
     private static void printExcel( String templateFileName, boolean copyTemplate) throws Exception {
@@ -201,6 +194,7 @@ public class PrintSettingCopyTest {
                     int tempIdx = workbook.getSheetIndex( reportSheet.getTemplateName());
                     Sheet expectedSheet = workbook.getSheetAt( tempIdx);
                     Sheet actualSheet = workbook.cloneSheet( tempIdx);
+                    ReportsUtil.copyPrintSetup( workbook, tempIdx, actualSheet);
                     try {
                         ReportsTestUtil.checkSheet( expectedSheet, actualSheet, true);
                     } catch ( ReportsCheckException e) {

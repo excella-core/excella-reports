@@ -349,8 +349,8 @@ public class ReportProcessor {
                     useSheetNames.add( reportSheet.getTemplateName());
                 } else {
                     int tempIdx = workbook.getSheetIndex( reportSheet.getTemplateName());
-
                     Sheet sheet = workbook.cloneSheet( tempIdx);
+                    ReportsUtil.copyPrintSetup( workbook, tempIdx, sheet);
                     workbook.setSheetName( workbook.getSheetIndex( sheet), reportSheet.getSheetName());
                     delSheetNames.add( reportSheet.getTemplateName());
                 }
