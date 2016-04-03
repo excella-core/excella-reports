@@ -41,8 +41,10 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.bbreak.excella.core.exception.ParseException;
@@ -638,5 +640,47 @@ public final class ReportsUtil {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * fromIdxのシートからtoIdxシートへの印刷設定のコピーを行う
+     * @param workbook fromIdx、toIdxのシートを含むworkbook
+     * @param fromIdx コピー元シートのインデックス
+     * @param sheet コピー先シート
+     */
+    public static void copyPrintSetup( Workbook workbook, int fromIdx, Sheet toSheet) {
+        Sheet fromSheet = workbook.getSheetAt( fromIdx);
+        // 印刷設定
+        PrintSetup fromPrintSetup = fromSheet.getPrintSetup();
+        PrintSetup printSetup = toSheet.getPrintSetup();
+        printSetup.setCopies( fromPrintSetup.getCopies());
+        printSetup.setDraft( fromPrintSetup.getDraft());
+        printSetup.setFitHeight( fromPrintSetup.getFitHeight());
+        printSetup.setFitWidth( fromPrintSetup.getFitWidth());
+        printSetup.setFooterMargin( fromPrintSetup.getFooterMargin());
+        printSetup.setHeaderMargin( fromPrintSetup.getHeaderMargin());
+        printSetup.setHResolution( fromPrintSetup.getHResolution());
+        printSetup.setLandscape( fromPrintSetup.getLandscape());
+        printSetup.setLeftToRight( fromPrintSetup.getLeftToRight());
+        printSetup.setNoColor( fromPrintSetup.getNoColor());
+        printSetup.setNoOrientation( fromPrintSetup.getNoOrientation());
+        printSetup.setPageStart( fromPrintSetup.getPageStart());
+        printSetup.setPaperSize( fromPrintSetup.getPaperSize());
+        printSetup.setScale( fromPrintSetup.getScale());
+        printSetup.setUsePage( fromPrintSetup.getUsePage());
+        printSetup.setValidSettings( fromPrintSetup.getValidSettings());
+        printSetup.setVResolution( fromPrintSetup.getVResolution());
+        // 印刷範囲
+        String printArea = workbook.getPrintArea( fromIdx);
+        if ( printArea != null) {
+            if ( printArea.contains( "!")) {
+                printArea = printArea.substring( printArea.indexOf( "!") + 1);
+            }
+            int toIdx = workbook.getSheetIndex( toSheet);
+            workbook.setPrintArea( toIdx, printArea);
+        }
+        // タイトル行、タイトル列
+        toSheet.setRepeatingColumns( fromSheet.getRepeatingColumns());
+        toSheet.setRepeatingRows( fromSheet.getRepeatingRows());
     }
 }
