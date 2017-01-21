@@ -407,7 +407,7 @@ public class BlockRowRepeatParamParser extends ReportsTagParser<Object[]> {
                         }
 
                         // 子パーサによって縦に増えた分、子パーサのタグ位置より前の列にセルを挿入
-                        if ( defaultFromCellColIndex != result.getDefaultColumnIndex() && result.getRowIndex() > result.getDefaultRowIndex()) {
+                        if ( defaultFromCellColIndex != result.getDefaultColumnIndex() && result.getRowIndex() > result.getDefaultRowIndex() && blockStartColIndex < targetCol) {
                             CellRangeAddress preRangeAddress = new CellRangeAddress( blockEndRowIndex + 1, blockEndRowIndex + (result.getRowIndex() - result.getDefaultRowIndex()), blockStartColIndex,
                                 targetCol - 1);
                             PoiUtil.insertRangeDown( sheet, preRangeAddress);
