@@ -30,6 +30,7 @@ package org.bbreak.excella.reports.listener;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -96,7 +97,7 @@ public class RemoveAdapter extends ReportProcessAdaptor {
                 for ( int colIndex = firstColNum; colIndex <= lastColNum; colIndex++) {
                     Cell cell = row.getCell( colIndex);
                     if ( cell != null) {
-                        if ( cell.getCellType() == Cell.CELL_TYPE_STRING && cell.getStringCellValue().contains( RemoveParamParser.DEFAULT_TAG)) {
+                        if ( cell.getCellTypeEnum() == CellType.STRING && cell.getStringCellValue().contains( RemoveParamParser.DEFAULT_TAG)) {
                             // タグのパラメータを取得
                             String[] paramArray = getStrParam( sheet, rowIndex, colIndex);
 

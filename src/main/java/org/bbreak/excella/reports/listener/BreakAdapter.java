@@ -28,6 +28,7 @@
 package org.bbreak.excella.reports.listener;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -71,7 +72,7 @@ public class BreakAdapter extends ReportProcessAdaptor {
         for ( int colIndex = firstColNum; colIndex <= lastColNum; colIndex++) {
             Cell cell = row.getCell( colIndex);
             if ( cell != null) {
-                if ( cell.getCellType() == Cell.CELL_TYPE_STRING && cell.getStringCellValue().contains( BreakParamParser.DEFAULT_TAG)) {
+                if ( cell.getCellTypeEnum() == CellType.STRING && cell.getStringCellValue().contains( BreakParamParser.DEFAULT_TAG)) {
                     // 改ページを挿入
                     if ( isInMergedRegion( sheet, row, cell)) {
                         setRowBreakMergedRegion( sheet, row, cell);

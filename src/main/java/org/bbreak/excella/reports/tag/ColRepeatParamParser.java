@@ -33,8 +33,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -331,7 +331,7 @@ public class ColRepeatParamParser extends ReportsTagParser<Object[]> {
                 // ■ハイパーリンク設定
                 if ( sheetLink) {
                     if ( !skipCol && valueIndex < sheetNames.size()) {
-                        PoiUtil.setHyperlink( cell, Hyperlink.LINK_DOCUMENT, "'" + sheetNames.get( valueIndex) + "'!A1");
+                        PoiUtil.setHyperlink( cell, HyperlinkType.DOCUMENT, "'" + sheetNames.get( valueIndex) + "'!A1");
                         if ( log.isDebugEnabled()) {
                             log.debug( "[シート名=" + sheetName + ",セル=(" + cell.getRowIndex() + "," + cell.getColumnIndex() + ")]  Hyperlink ⇒ " + "'" + sheetNames.get( valueIndex) + "'!A1");
                         }
