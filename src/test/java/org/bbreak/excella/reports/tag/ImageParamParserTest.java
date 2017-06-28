@@ -565,8 +565,8 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
     private ParamInfo createTestData( String tag) {
 
         ParamInfo info = new ParamInfo();
-        info.addParam( tag, "png", getImagePath( "bbreak.png"));
-        info.addParam( tag, "jpeg", getImagePath( "bbreak.jpg"));
+        info.addParam( tag, "png", getImagePath( "bbreak.PNG"));
+        info.addParam( tag, "jpeg", getImagePath( "bbreak.JPG"));
 
         return info;
 
@@ -575,11 +575,11 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
     private ParamInfo createPluralTestData( String tag) {
 
         ParamInfo info = new ParamInfo();
-        info.addParam( tag, "png", getImagePath( "bbreak.png"));
-        info.addParam( tag, "jpeg", getImagePath( "bbreak.jpg"));
+        info.addParam( tag, "png", getImagePath( "bbreak.PNG"));
+        info.addParam( tag, "jpeg", getImagePath( "bbreak.JPG"));
 
-        info.addParam( tag, "expng", getImagePath( "excella.png"));
-        info.addParam( tag, "exjpeg", getImagePath( "excella.jpg"));
+        info.addParam( tag, "expng", getImagePath( "excella.PNG"));
+        info.addParam( tag, "exjpeg", getImagePath( "excella.JPG"));
 
         return info;
 
