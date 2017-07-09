@@ -289,7 +289,11 @@ public class RemoveAdapter extends ReportProcessAdaptor {
             sheet.removeRow( sheet.getRow( rowIndex));
         } else {
             sheet.removeRow( sheet.getRow( rowIndex));
-            sheet.shiftRows( rowIndex + 1, sheet.getLastRowNum(), -1, true, true);
+            // #35 POIの不具合のため、行シフト先に結合セルがあると、解除されてしまう。
+            // そのため、0～最終列までのセル範囲の削除で対応している。
+            CellRangeAddress rangeAddress = new CellRangeAddress( rowIndex, rowIndex, 0, PoiUtil.getLastColNum( sheet));
+            PoiUtil.deleteRangeUp( sheet, rangeAddress);
+            // sheet.shiftRows( rowIndex + 1, sheet.getLastRowNum(), -1, true, true);
         }
     }
 
