@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.bbreak.excella</groupId>
   <artifactId>excella-reports</artifactId>
-  <version>1.10</version>
+  <version>1.11</version>
   <name>excella-reports</name>
 
   <properties>
@@ -98,7 +98,7 @@
   	<dependency>
   		<groupId>org.bbreak.excella</groupId>
   		<artifactId>excella-core</artifactId>
-  		<version>1.11</version>
+  		<version>1.12</version>
   	</dependency>
   	<dependency>
   		<groupId>junit</groupId>
