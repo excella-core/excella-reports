@@ -28,17 +28,19 @@
 
 package org.bbreak.excella.reports.tag;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.core.util.PoiUtil;
 import org.bbreak.excella.reports.ReportsTestUtil;
@@ -328,7 +330,21 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
             assertTrue( e.getCause() instanceof IllegalArgumentException);
             assertTrue( e.getMessage().contains("There are crossing merged regions in the range."));
         }
-        
+
+        // ------------------------------------------------------------
+        // □[正常系]
+        // ・行シフト先に結合セルがある
+        // ------------------------------------------------------------
+        workbook = getWorkbook();
+        Sheet sheet17 = workbook.getSheetAt( 16);
+        results = null;
+        try {
+            results = parseSheet( parser, sheet17, reportsParserInfo);
+        } catch ( ParseException e) {
+            e.printStackTrace();
+            fail( e.toString());
+        }
+        checkSheet( "Sheet17", sheet17, true);
     }
 
     /**

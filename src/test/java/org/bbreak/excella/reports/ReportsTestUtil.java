@@ -41,9 +41,9 @@ import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.PrintSetup;
@@ -52,6 +52,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -261,7 +262,7 @@ public class ReportsTestUtil {
                     Iterator<Cell> cellIterator = row.cellIterator();
                     while ( cellIterator.hasNext()) {
                         Cell cell = cellIterator.next();
-                        if ( cell.getCellType() != Cell.CELL_TYPE_BLANK) {
+                        if ( cell.getCellTypeEnum() != CellType.BLANK) {
                             lastRowIndex = row.getRowNum();
                             break;
                         }
@@ -404,9 +405,9 @@ public class ReportsTestUtil {
         }
 
         // 型
-        if ( expected.getCellType() != actual.getCellType()) {
-            errors.add( new CheckMessage( "型[" + "セル(" + expected.getRowIndex() + "," + expected.getColumnIndex() + ")" + "]", getCellTypeString( expected.getCellType()), getCellTypeString( actual
-                .getCellType())));
+        if ( expected.getCellTypeEnum() != actual.getCellTypeEnum()) {
+            errors.add( new CheckMessage( "型[" + "セル(" + expected.getRowIndex() + "," + expected.getColumnIndex() + ")" + "]", getCellTypeString( expected.getCellTypeEnum()),
+                getCellTypeString( actual.getCellTypeEnum())));
             throw new ReportsCheckException( errors);
         }
 
@@ -496,22 +497,22 @@ public class ReportsTestUtil {
             sb.append( "DataFormatString=").append( cellStyle.getDataFormatString()).append( ",");
             sb.append( "Hidden=").append( cellStyle.getHidden()).append( ",");
             sb.append( "Locked=").append( cellStyle.getLocked()).append( ",");
-            sb.append( "Alignment=").append( cellStyle.getAlignment()).append( ",");
+            sb.append( "Alignment=").append( cellStyle.getAlignmentEnum()).append( ",");
             sb.append( "WrapText=").append( cellStyle.getWrapText()).append( ",");
-            sb.append( "VerticalAlignment=").append( cellStyle.getVerticalAlignment()).append( ",");
+            sb.append( "VerticalAlignment=").append( cellStyle.getVerticalAlignmentEnum()).append( ",");
             sb.append( "Rotation=").append( cellStyle.getRotation()).append( ",");
             sb.append( "Indention=").append( cellStyle.getIndention()).append( ",");
-            sb.append( "BorderLeft=").append( cellStyle.getBorderLeft()).append( ",");
-            sb.append( "BorderRight=").append( cellStyle.getBorderRight()).append( ",");
-            sb.append( "BorderTop=").append( cellStyle.getBorderTop()).append( ",");
-            sb.append( "BorderBottom=").append( cellStyle.getBorderBottom()).append( ",");
+            sb.append( "BorderLeft=").append( cellStyle.getBorderLeftEnum()).append( ",");
+            sb.append( "BorderRight=").append( cellStyle.getBorderRightEnum()).append( ",");
+            sb.append( "BorderTop=").append( cellStyle.getBorderTopEnum()).append( ",");
+            sb.append( "BorderBottom=").append( cellStyle.getBorderBottomEnum()).append( ",");
 
             sb.append( "LeftBorderColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getLeftBorderColor())).append( ",");
             sb.append( "RightBorderColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getRightBorderColor())).append( ",");
             sb.append( "TopBorderColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getTopBorderColor())).append( ",");
             sb.append( "BottomBorderColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getBottomBorderColor())).append( ",");
 
-            sb.append( "FillPattern=").append( cellStyle.getFillPattern()).append( ",");
+            sb.append( "FillPattern=").append( cellStyle.getFillPatternEnum()).append( ",");
             sb.append( "FillForegroundColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getFillForegroundColor())).append( ",");
             sb.append( "FillBackgroundColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getFillBackgroundColor()));
         }
@@ -532,7 +533,7 @@ public class ReportsTestUtil {
         sb.append( "italic=").append( font.getItalic()).append( ",");
         sb.append( "strikout=").append( font.getStrikeout()).append( ",");
         sb.append( "colorpalette=").append( getHSSFColorString( ( HSSFWorkbook) workbook, font.getColor())).append( ",");
-        sb.append( "boldweight=").append( Integer.toHexString( font.getBoldweight())).append( ",");
+        sb.append( "bold=").append( font.getBold()).append( ",");
         sb.append( "supersubscript=").append( Integer.toHexString( font.getTypeOffset())).append( ",");
         sb.append( "underline=").append( Integer.toHexString( font.getUnderline())).append( ",");
         sb.append( "charset=").append( Integer.toHexString( font.getCharSet())).append( ",");
@@ -573,22 +574,22 @@ public class ReportsTestUtil {
             sb.append( "DataFormatString=").append( cellStyle.getDataFormatString()).append( ",");
             sb.append( "Hidden=").append( cellStyle.getHidden()).append( ",");
             sb.append( "Locked=").append( cellStyle.getLocked()).append( ",");
-            sb.append( "Alignment=").append( cellStyle.getAlignment()).append( ",");
+            sb.append( "Alignment=").append( cellStyle.getAlignmentEnum()).append( ",");
             sb.append( "WrapText=").append( cellStyle.getWrapText()).append( ",");
-            sb.append( "VerticalAlignment=").append( cellStyle.getVerticalAlignment()).append( ",");
+            sb.append( "VerticalAlignment=").append( cellStyle.getVerticalAlignmentEnum()).append( ",");
             sb.append( "Rotation=").append( cellStyle.getRotation()).append( ",");
             sb.append( "Indention=").append( cellStyle.getIndention()).append( ",");
-            sb.append( "BorderLeft=").append( cellStyle.getBorderLeft()).append( ",");
-            sb.append( "BorderRight=").append( cellStyle.getBorderRight()).append( ",");
-            sb.append( "BorderTop=").append( cellStyle.getBorderTop()).append( ",");
-            sb.append( "BorderBottom=").append( cellStyle.getBorderBottom()).append( ",");
+            sb.append( "BorderLeft=").append( cellStyle.getBorderLeftEnum()).append( ",");
+            sb.append( "BorderRight=").append( cellStyle.getBorderRightEnum()).append( ",");
+            sb.append( "BorderTop=").append( cellStyle.getBorderTopEnum()).append( ",");
+            sb.append( "BorderBottom=").append( cellStyle.getBorderBottomEnum()).append( ",");
 
             sb.append( "LeftBorderColor=").append( getXSSFColorString( cellStyle.getLeftBorderXSSFColor())).append( ",");
             sb.append( "RightBorderColor=").append( getXSSFColorString( cellStyle.getRightBorderXSSFColor())).append( ",");
             sb.append( "TopBorderColor=").append( getXSSFColorString( cellStyle.getTopBorderXSSFColor())).append( ",");
             sb.append( "BottomBorderColor=").append( getXSSFColorString( cellStyle.getBottomBorderXSSFColor())).append( ",");
 
-            sb.append( "FillPattern=").append( cellStyle.getFillPattern()).append( ",");
+            sb.append( "FillPattern=").append( cellStyle.getFillPatternEnum()).append( ",");
             try {
                 sb.append( "FillForegroundColor=").append( getXSSFColorString( cellStyle.getFillForegroundXSSFColor())).append( ",");
             } catch ( NullPointerException e) {
@@ -617,8 +618,8 @@ public class ReportsTestUtil {
         if ( color != null) {
             sb.append( "Indexed=").append( color.getIndexed()).append( ",");
             sb.append( "Rgb=");
-            if ( color.getRgb() != null) {
-                for ( byte b : color.getRgb()) {
+            if ( color.getRGB() != null) {
+                for ( byte b : color.getRGB()) {
                     sb.append( String.format( "%02x", b).toUpperCase());
                 }
             }
@@ -727,23 +728,23 @@ public class ReportsTestUtil {
         String value = null;
 
         if ( cell != null) {
-            switch ( cell.getCellType()) {
-                case Cell.CELL_TYPE_BLANK:
+            switch ( cell.getCellTypeEnum()) {
+                case BLANK:
                     value = cell.getStringCellValue();
                     break;
-                case Cell.CELL_TYPE_BOOLEAN:
+                case BOOLEAN:
                     value = String.valueOf( cell.getBooleanCellValue());
                     break;
-                case Cell.CELL_TYPE_ERROR:
+                case ERROR:
                     value = String.valueOf( cell.getErrorCellValue());
                     break;
-                case Cell.CELL_TYPE_NUMERIC:
+                case NUMERIC:
                     value = String.valueOf( cell.getNumericCellValue());
                     break;
-                case Cell.CELL_TYPE_STRING:
+                case STRING:
                     value = cell.getStringCellValue();
                     break;
-                case Cell.CELL_TYPE_FORMULA:
+                case FORMULA:
                     value = cell.getCellFormula();
                 default:
                     value = "";
@@ -758,22 +759,11 @@ public class ReportsTestUtil {
      * @param cellType セルタイプ
      * @return セルタイプの文字列表現
      */
-    private static String getCellTypeString( int cellType) {
-        switch ( cellType) {
-            case Cell.CELL_TYPE_BLANK:
-                return "BLANK";
-            case Cell.CELL_TYPE_BOOLEAN:
-                return "BOOLEAN";
-            case Cell.CELL_TYPE_ERROR:
-                return "BLANK";
-            case Cell.CELL_TYPE_NUMERIC:
-                return "NUMERIC";
-            case Cell.CELL_TYPE_STRING:
-                return "STRING";
-            case Cell.CELL_TYPE_FORMULA:
-                return "FORMULA";
-            default:
-                return "";
+    private static String getCellTypeString( CellType cellType) {
+        if ( cellType != null) {
+            return cellType.toString();
+        } else {
+            return "";
         }
     }
 

@@ -37,6 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -229,7 +230,7 @@ public class BlockColRepeatParamParser extends ReportsTagParser<Object[]> {
             // BCブロック情報の保存Cell[row][col]
             Object[][] blockCellsValue = ReportsUtil.getBlockCellValue( sheet, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
             CellStyle[][] blockCellsStyle = ReportsUtil.getBlockCellStyle( sheet, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
-            int[][] blockCellTypes = ReportsUtil.getBlockCellType( sheet, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
+            CellType[][] blockCellTypes = ReportsUtil.getBlockCellType( sheet, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
             // 最終列座標までの列幅情報を保存する
             int[] columnWidths = ReportsUtil.getColumnWidth( sheet, defaultFromCellColIndex, defaultToCellColIndex);
 
@@ -328,7 +329,7 @@ public class BlockColRepeatParamParser extends ReportsTagParser<Object[]> {
                             // セル取得
                             Cell cell = row.getCell( copyToColIndex);
                             // セルタイプの取得
-                            int cellType = blockCellTypes[rowIdx][colIdx];
+                            CellType cellType = blockCellTypes[rowIdx][colIdx];
                             // セル値の取得
                             Object cellValue = blockCellsValue[rowIdx][colIdx];
                             // セルスタイルの取得
@@ -520,7 +521,7 @@ public class BlockColRepeatParamParser extends ReportsTagParser<Object[]> {
 
             // タグ除去
             if ( removeTag) {
-                tagCell.setCellType( Cell.CELL_TYPE_BLANK);
+                tagCell.setCellType( CellType.BLANK);
             }
 
             // リターン情報セット

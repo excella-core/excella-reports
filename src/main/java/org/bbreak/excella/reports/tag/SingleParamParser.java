@@ -37,6 +37,7 @@ import java.util.StringTokenizer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.bbreak.excella.core.exception.ParseException;
@@ -192,7 +193,7 @@ public class SingleParamParser extends ReportsTagParser<Object> {
     @Override
     public boolean isParse( Sheet sheet, Cell tagCell) throws ParseException {
         // 文字列かつ、タグを含むセルの場合は処理対象
-        if ( tagCell.getCellType() == Cell.CELL_TYPE_STRING) {
+        if ( tagCell.getCellTypeEnum() == CellType.STRING) {
             String cellTag = TagUtil.getTag( tagCell.getStringCellValue());
             if ( cellTag.endsWith( getTag())) {
                 return true;

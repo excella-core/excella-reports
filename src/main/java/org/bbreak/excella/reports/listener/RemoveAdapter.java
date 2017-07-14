@@ -30,6 +30,7 @@ package org.bbreak.excella.reports.listener;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -96,7 +97,7 @@ public class RemoveAdapter extends ReportProcessAdaptor {
                 for ( int colIndex = firstColNum; colIndex <= lastColNum; colIndex++) {
                     Cell cell = row.getCell( colIndex);
                     if ( cell != null) {
-                        if ( cell.getCellType() == Cell.CELL_TYPE_STRING && cell.getStringCellValue().contains( RemoveParamParser.DEFAULT_TAG)) {
+                        if ( cell.getCellTypeEnum() == CellType.STRING && cell.getStringCellValue().contains( RemoveParamParser.DEFAULT_TAG)) {
                             // タグのパラメータを取得
                             String[] paramArray = getStrParam( sheet, rowIndex, colIndex);
 
@@ -288,7 +289,11 @@ public class RemoveAdapter extends ReportProcessAdaptor {
             sheet.removeRow( sheet.getRow( rowIndex));
         } else {
             sheet.removeRow( sheet.getRow( rowIndex));
-            sheet.shiftRows( rowIndex + 1, sheet.getLastRowNum(), -1, true, true);
+            // #35 POIの不具合のため、行シフト先に結合セルがあると、解除されてしまう。
+            // そのため、0～最終列までのセル範囲の削除で対応している。
+            CellRangeAddress rangeAddress = new CellRangeAddress( rowIndex, rowIndex, 0, PoiUtil.getLastColNum( sheet));
+            PoiUtil.deleteRangeUp( sheet, rangeAddress);
+            // sheet.shiftRows( rowIndex + 1, sheet.getLastRowNum(), -1, true, true);
         }
     }
 

@@ -33,6 +33,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -416,6 +418,11 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
         assertEquals( address1.toString(), ReportsUtil.getMergedAddress( hssfSheet, 0, 1).toString());
         assertEquals( address2.toString(), ReportsUtil.getMergedAddress( hssfSheet, 0, 2).toString());
 
+        try {
+            hssfWb.close();
+        } catch(IOException e) {
+        }
+        
         // ブック作成
         Workbook xssfWb = new XSSFWorkbook();
 
@@ -441,6 +448,10 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
         assertEquals( address1.toString(), ReportsUtil.getMergedAddress( xssfSheet, 0, 1).toString());
         assertEquals( address2.toString(), ReportsUtil.getMergedAddress( xssfSheet, 0, 2).toString());
 
+        try {
+            xssfWb.close();
+        } catch(IOException e) {
+        }
     }
 
     /**
@@ -502,7 +513,7 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
                         fail();
                     }
                 } else {
-                    assertTrue( sheet.getRow( r) == null || sheet.getRow( r).getCell( c) == null || sheet.getRow( r).getCell( c).getCellType() == Cell.CELL_TYPE_BLANK);
+                    assertTrue( sheet.getRow( r) == null || sheet.getRow( r).getCell( c) == null || sheet.getRow( r).getCell( c).getCellTypeEnum() == CellType.BLANK);
                 }
 
             }
@@ -586,7 +597,7 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
 
         // シート情報の保存[row][col]
         // タイプ、値、スタイル
-        int[][] sheetCellTypes = ReportsUtil.getBlockCellType( sheet2, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
+        CellType[][] sheetCellTypes = ReportsUtil.getBlockCellType( sheet2, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
         Object[][] sheetCellValues = ReportsUtil.getBlockCellValue( sheet2, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
         CellStyle[][] sheetCellStyles = ReportsUtil.getBlockCellStyle( sheet2, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
 
@@ -638,7 +649,7 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
 
         // シート情報の保存[row][col]
         // タイプ、値、スタイル
-        int[][] sheetCellTypes = ReportsUtil.getBlockCellType( sheet2, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
+        CellType[][] sheetCellTypes = ReportsUtil.getBlockCellType( sheet2, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
         Object[][] sheetCellValues = ReportsUtil.getBlockCellValue( sheet2, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
         CellStyle[][] sheetCellStyles = ReportsUtil.getBlockCellStyle( sheet2, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
 

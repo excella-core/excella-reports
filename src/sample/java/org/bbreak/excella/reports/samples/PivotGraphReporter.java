@@ -98,7 +98,6 @@ public class PivotGraphReporter {
      * 
      * @return 売上データ置換パラメータ(PivotGraphData配列)を返します
      */
-    @SuppressWarnings( "unused")
     private static PivotGraphData[] createRandomPivotGraphDatas() throws Exception {
 
         List<PivotGraphData> datas = new ArrayList<PivotGraphData>();

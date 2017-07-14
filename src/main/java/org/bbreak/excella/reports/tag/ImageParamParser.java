@@ -39,6 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -114,6 +115,7 @@ public class ImageParamParser extends ReportsTagParser<String> {
     /**
      * 図オブジェクトコンテナのキャッシュ
      */
+    @SuppressWarnings( "rawtypes")
     private Map<Sheet, Drawing> drawingCash = new HashMap<Sheet, Drawing>();
 
     /**
@@ -178,7 +180,7 @@ public class ImageParamParser extends ReportsTagParser<String> {
             // 結合セルに含まれるか
             if ( ReportsUtil.getMergedAddress( sheet, tagCell.getRowIndex(), tagCell.getColumnIndex()) != null) {
                 CellStyle cellStyle = tagCell.getCellStyle();
-                tagCell.setCellType( Cell.CELL_TYPE_BLANK);
+                tagCell.setCellType( CellType.BLANK);
                 tagCell.setCellStyle( cellStyle);
             } else {
                 tagCell = new CellClone( tagCell);
@@ -314,6 +316,7 @@ public class ImageParamParser extends ReportsTagParser<String> {
 
         CreationHelper helper = workbook.getCreationHelper();
 
+        @SuppressWarnings( "rawtypes")
         Drawing drawing = drawingCash.get( sheet);
         if ( drawing == null) {
             drawing = sheet.createDrawingPatriarch();

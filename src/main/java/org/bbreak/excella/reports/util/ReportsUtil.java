@@ -39,8 +39,8 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -495,17 +495,17 @@ public final class ReportsUtil {
      * @param bEndColIndex 範囲終了列番号
      * @return セルのタイプ
      */
-    public static int[][] getBlockCellType( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex) {
-        int[][] blockCellType = new int[bEndRowIndex - bStartRowIndex + 1][bEndColIndex - bStartColIndex + 1];
+    public static CellType[][] getBlockCellType( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex) {
+        CellType[][] blockCellType = new CellType[bEndRowIndex - bStartRowIndex + 1][bEndColIndex - bStartColIndex + 1];
         int rowIdx = 0;
         for ( int bRowIndex = bStartRowIndex; bRowIndex <= bEndRowIndex; bRowIndex++) {
             int colIdx = 0;
             for ( int bColIndex = bStartColIndex; bColIndex <= bEndColIndex; bColIndex++) {
                 Row row = sheet.getRow( bRowIndex);
                 if ( row != null && row.getCell( bColIndex) != null) {
-                    blockCellType[rowIdx][colIdx] = row.getCell( bColIndex).getCellType();
+                    blockCellType[rowIdx][colIdx] = row.getCell( bColIndex).getCellTypeEnum();
                 } else {
-                    blockCellType[rowIdx][colIdx] = Cell.CELL_TYPE_BLANK;
+                    blockCellType[rowIdx][colIdx] = CellType.BLANK;
                 }
 
                 colIdx++;
@@ -592,10 +592,10 @@ public final class ReportsUtil {
      * @param rowCellStyles 対象行のセルタイプ
      * @return 行が空の場合はtrue、行に何らかの情報を持っている場合はfalse
      */
-    public static boolean isEmptyRow( int[] rowCellTypes, Object[] rowCellValues, CellStyle[] rowCellStyles) {
-        // CellTypeの空判定 Cell.CELL_TYPE_BLANKなら空とみなす
-        for ( int cellType : rowCellTypes) {
-            if ( cellType != Cell.CELL_TYPE_BLANK) {
+    public static boolean isEmptyRow( CellType[] rowCellTypes, Object[] rowCellValues, CellStyle[] rowCellStyles) {
+        // CellTypeの空判定 BLANKなら空とみなす
+        for ( CellType cellType : rowCellTypes) {
+            if ( cellType != CellType.BLANK) {
                 return false;
             }
         }
@@ -624,9 +624,9 @@ public final class ReportsUtil {
      * @param cellStyle 対象セルのタイプ
      * @return セルが空の場合はtrue、セルに何らかの情報を持っている場合はfalse
      */
-    public static boolean isEmptyCell( int cellType, Object cellValue, CellStyle cellStyle) {
-        // CellTypeの空判定 Cell.CELL_TYPE_BLANKなら空とみなす
-        if ( cellType != Cell.CELL_TYPE_BLANK) {
+    public static boolean isEmptyCell( CellType cellType, Object cellValue, CellStyle cellStyle) {
+        // CellTypeの空判定 BLANKなら空とみなす
+        if ( cellType != CellType.BLANK) {
             return false;
         }
 
