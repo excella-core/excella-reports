@@ -345,6 +345,36 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
             fail( e.toString());
         }
         checkSheet( "Sheet17", sheet17, true);
+        
+        // ------------------------------------------------------------
+        // □[正常系]
+        // ・最低繰返回数
+        // ------------------------------------------------------------
+        workbook = getWorkbook();
+        Sheet sheet18 = workbook.getSheetAt( 17);
+        // 解析処理
+        results = null;
+        try {
+            results = parseSheet( parser, sheet18, reportsParserInfo);
+        } catch ( ParseException e) {
+            e.printStackTrace();
+            fail( e.toString());
+        }
+        
+        // 順にデータ数=最低繰返回数、データ数=最低繰返数-1,データ数=最低繰返数-1(結合セルが下にある),データ数=最低繰返数-1(結合セルを繰り返し)
+        expectBeCells = new CellObject[] {new CellObject(1,1),new CellObject(2,2),new CellObject(2,4), new CellObject(4,3)};
+        expectAfCells = new CellObject[] {new CellObject(5,1),new CellObject(5,2),new CellObject(5,4), new CellObject(10,3)};
+        checkResult( expectBeCells, expectAfCells, results);
+
+        // 不要シートを削除
+        if ( version.equals( "2007")) {
+            int index = workbook.getSheetIndex( PoiUtil.TMP_SHEET_NAME);
+            if ( index > 0) {
+                workbook.removeSheetAt( index);
+            }
+        }
+        
+        checkSheet( "Sheet18", sheet18, true);
     }
 
     /**
