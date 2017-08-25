@@ -319,6 +319,35 @@ public class ColRepeatParamParserTest extends ReportsWorkbookTest {
             assertTrue( e.getMessage().contains("There are crossing merged regions in the range."));
         }
 
+        // ------------------------------------------------------------
+        // □[正常系]
+        // ・最低繰返回数
+        // ------------------------------------------------------------
+        workbook = getWorkbook();
+        Sheet sheet15 = workbook.getSheetAt( 14);
+        // 解析処理
+        results = null;
+        try {
+            results = parseSheet( parser, sheet15, reportsParserInfo);
+        } catch ( ParseException e) {
+            e.printStackTrace();
+            fail( e.toString());
+        }
+        
+        // 順にデータ数=最低繰返回数、データ数=最低繰返数-1,データ数=最低繰返数-1(結合セルを繰り返し),データ数=最低繰返数-1(結合セルが右にある)
+        expectBeCells = new CellObject[] {new CellObject(1,1),new CellObject(2,2),new CellObject(3,4), new CellObject(4,4) };
+        expectAfCells = new CellObject[] {new CellObject(1,5),new CellObject(2,5),new CellObject(3,10), new CellObject(4,7) };
+        checkResult( expectBeCells, expectAfCells, results);
+
+        // 不要シートを削除
+        if ( version.equals( "2007")) {
+            int index = workbook.getSheetIndex( PoiUtil.TMP_SHEET_NAME);
+            if ( index > 0) {
+                workbook.removeSheetAt( index);
+            }
+        }
+        
+        checkSheet( "Sheet15", sheet15, true);
     }
 
     /**
