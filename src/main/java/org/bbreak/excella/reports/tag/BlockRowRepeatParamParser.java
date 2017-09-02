@@ -88,6 +88,11 @@ public class BlockRowRepeatParamParser extends ReportsTagParser<Object[]> {
     public static final String PARAM_REPEAT_NUM = "repeatNum";
 
     /**
+     * 最小繰り返し回数パラメータ
+     */
+    public static final String PARAM_MIN_REPEAT_NUM = "minRepeatNum";
+    
+    /**
      * 折り返し回数パラメータ
      */
     public static final String PARAM_TURN_NUM = "turnNum";
@@ -173,6 +178,19 @@ public class BlockRowRepeatParamParser extends ReportsTagParser<Object[]> {
                 }
                 paramInfoList.add( childParamInfo);
             }
+            
+            // 最小繰り返し回数
+            if ( paramDef.containsKey( PARAM_MIN_REPEAT_NUM)) {
+                Integer minRepeatNum = Integer.valueOf( paramDef.get( PARAM_MIN_REPEAT_NUM));
+                if ( minRepeatNum > paramInfoList.size()) {
+                    int addEmptyRowNum = minRepeatNum - paramInfoList.size();
+                    for ( int num = 0; num < addEmptyRowNum; num++) {
+                        ParamInfo childParamInfo = new ParamInfo();
+                        paramInfoList.add( childParamInfo);
+                    }
+                }
+            }
+            
             paramInfos = paramInfoList.toArray( new ParamInfo[paramInfoList.size()]);
 
             // repeatNum定義

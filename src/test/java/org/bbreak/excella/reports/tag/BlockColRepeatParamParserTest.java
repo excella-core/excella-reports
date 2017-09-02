@@ -625,6 +625,61 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
         
         checkSheet( "sheet22", sheet22, true);
 
+        // -----------------------
+        // □[正常系]オプション指定
+        // ・最低繰返回数(最低繰返数=paramInfo数)
+        // -----------------------
+        ReportsParserInfo reportsParserInfo23 = new ReportsParserInfo();
+        reportsParserInfo23.setReportParsers( new ArrayList<ReportsTagParser<?>>( ReportCreateHelper.createDefaultParsers().values()));
+        reportsParserInfo23.setReportBook( reportBook);
+        reportsParserInfo23.setParamInfo( reportSheets[0].getParamInfo());
+        
+        workbook = getWorkbook();
+        Sheet sheet23 = workbook.getSheetAt( 22);
+        
+        results = parseSheet( parser, sheet23, reportsParserInfo23);
+        
+        expectBeCells = new CellObject[] {new CellObject( 3, 3)};
+        expectAfCells = new CellObject[] {new CellObject( 3, 6)};
+        checkResult( expectBeCells, expectAfCells, results);
+        
+        // 不要シートを削除
+        if ( version.equals( "2007")) {
+            int index = workbook.getSheetIndex( PoiUtil.TMP_SHEET_NAME);
+            if ( index > 0) {
+                workbook.removeSheetAt( index);
+            }
+        }
+        
+        checkSheet( "sheet23", sheet23, true);
+        
+        // -----------------------
+        // □[正常系]オプション指定
+        // ・最低繰返回数(最低繰返数=paramInfo数+1)
+        // -----------------------
+        ReportsParserInfo reportsParserInfo24 = new ReportsParserInfo();
+        reportsParserInfo24.setReportParsers( new ArrayList<ReportsTagParser<?>>( ReportCreateHelper.createDefaultParsers().values()));
+        reportsParserInfo24.setReportBook( reportBook);
+        reportsParserInfo24.setParamInfo( reportSheets[0].getParamInfo());
+        
+        workbook = getWorkbook();
+        Sheet sheet24 = workbook.getSheetAt( 23);
+        
+        results = parseSheet( parser, sheet24, reportsParserInfo24);
+        
+        expectBeCells = new CellObject[] {new CellObject( 3, 3)};
+        expectAfCells = new CellObject[] {new CellObject( 3, 9)};
+        checkResult( expectBeCells, expectAfCells, results);
+        
+        // 不要シートを削除
+        if ( version.equals( "2007")) {
+            int index = workbook.getSheetIndex( PoiUtil.TMP_SHEET_NAME);
+            if ( index > 0) {
+                workbook.removeSheetAt( index);
+            }
+        }
+        
+        checkSheet( "sheet24", sheet24, true);
     }
     
     

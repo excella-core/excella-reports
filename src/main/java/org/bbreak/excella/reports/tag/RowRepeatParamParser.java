@@ -96,6 +96,11 @@ public class RowRepeatParamParser extends ReportsTagParser<Object[]> {
     public static final String PARAM_REPEAT_NUM = "repeatNum";
 
     /**
+     * 最小繰り返し回数パラメータ
+     */
+    public static final String PARAM_MIN_REPEAT_NUM = "minRepeatNum";
+    
+    /**
      * シートへのハイパーリンク設定有無
      */
     public static final String PARAM_SHEET_LINK = "sheetLink";
@@ -159,6 +164,11 @@ public class RowRepeatParamParser extends ReportsTagParser<Object[]> {
             if ( paramDef.containsKey( PARAM_REPEAT_NUM)) {
                 repeatNum = Integer.valueOf( paramDef.get( PARAM_REPEAT_NUM));
             }
+            // 最小繰り返し最大回数
+            Integer minRepeatNum = null;
+            if ( paramDef.containsKey( PARAM_MIN_REPEAT_NUM)) {
+                minRepeatNum = Integer.valueOf( paramDef.get( PARAM_MIN_REPEAT_NUM));
+            }
             // シートハイパーリンク設定有無
             boolean sheetLink = false;
             if ( paramDef.containsKey( PARAM_SHEET_LINK)) {
@@ -195,6 +205,15 @@ public class RowRepeatParamParser extends ReportsTagParser<Object[]> {
             int shiftNum = paramValues.length;
             // パラメータ数を取得
             int paramLength = paramValues.length;
+            
+            // 最小繰り返し数よりデータが少なければ増やす
+            if(minRepeatNum != null && shiftNum < minRepeatNum) {
+            	Object[] tmpValues = new Object[minRepeatNum];
+            	System.arraycopy(paramValues, 0, tmpValues, 0, paramValues.length);
+            	paramValues = tmpValues;
+            	shiftNum = paramValues.length;
+            	paramLength = paramValues.length;
+            }
 
             // 対象セルの開始行番号を取得
             int defaultFromCellRowIndex = tagCell.getRowIndex();
