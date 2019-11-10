@@ -506,7 +506,7 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
                         fail();
                     }
                 } else {
-                    assertTrue( sheet.getRow( r) == null || sheet.getRow( r).getCell( c) == null || sheet.getRow( r).getCell( c).getCellTypeEnum() == CellType.BLANK);
+                    assertTrue( sheet.getRow( r) == null || sheet.getRow( r).getCell( c) == null || sheet.getRow( r).getCell( c).getCellType() == CellType.BLANK);
                 }
 
             }

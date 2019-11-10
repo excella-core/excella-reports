@@ -186,7 +186,7 @@ public class SingleParamParser extends ReportsTagParser<Object> {
     @Override
     public boolean isParse( Sheet sheet, Cell tagCell) throws ParseException {
         // 文字列かつ、タグを含むセルの場合は処理対象
-        if ( tagCell.getCellTypeEnum() == CellType.STRING) {
+        if ( tagCell.getCellType() == CellType.STRING) {
             String cellTag = TagUtil.getTag( tagCell.getStringCellValue());
             if ( cellTag.endsWith( getTag())) {
                 return true;

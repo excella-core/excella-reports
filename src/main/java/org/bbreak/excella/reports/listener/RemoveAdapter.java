@@ -90,7 +90,7 @@ public class RemoveAdapter extends ReportProcessAdaptor {
                 for ( int colIndex = firstColNum; colIndex <= lastColNum; colIndex++) {
                     Cell cell = row.getCell( colIndex);
                     if ( cell != null) {
-                        if ( cell.getCellTypeEnum() == CellType.STRING && cell.getStringCellValue().contains( RemoveParamParser.DEFAULT_TAG)) {
+                        if ( cell.getCellType() == CellType.STRING && cell.getStringCellValue().contains( RemoveParamParser.DEFAULT_TAG)) {
                             // タグのパラメータを取得
                             String[] paramArray = getStrParam( sheet, rowIndex, colIndex);
 
@@ -113,7 +113,7 @@ public class RemoveAdapter extends ReportProcessAdaptor {
                             colIndex--;
                         }
                         // 制御行の処理
-                        if ( isControlRow( sheet, sheetParser, row, cell)) {
+                        else if ( isControlRow( sheet, sheetParser, row, cell)) {
                             removeControlRow( sheet, rowIndex);
                             isRowFlag = true;
                             break;
@@ -166,13 +166,13 @@ public class RemoveAdapter extends ReportProcessAdaptor {
             removeRegion( sheet, rowIndex, colIndex);
             if ( paramArray.length > 1) {
                 Row removeRow = sheet.getRow( rowIndex);
-                if( removeRow != null){
+                if ( removeRow != null) {
                     Cell removeCell = removeRow.getCell( colIndex);
-                    if( removeCell != null){
-                        removeRow.removeCell( removeCell);                        
+                    if ( removeCell != null) {
+                        removeRow.removeCell( removeCell);
                     }
                 }
-                
+
                 // セル削除後のシフト方向
                 String direction = paramArray[1];
                 if ( direction.equals( LEFT)) {

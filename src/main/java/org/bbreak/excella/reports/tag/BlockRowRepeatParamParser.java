@@ -494,7 +494,7 @@ public class BlockRowRepeatParamParser extends ReportsTagParser<Object[]> {
 
             // タグ除去
             if ( removeTag) {
-                tagCell.setCellType( CellType.BLANK);
+                tagCell.setBlank();
             }
 
             // 解析結果

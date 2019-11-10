@@ -530,7 +530,7 @@ public class BlockColRepeatParamParser extends ReportsTagParser<Object[]> {
 
             // タグ除去
             if ( removeTag) {
-                tagCell.setCellType( CellType.BLANK);
+                tagCell.setBlank();
             }
 
             // リターン情報セット
