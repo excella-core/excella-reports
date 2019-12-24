@@ -496,7 +496,7 @@ public final class ReportsUtil {
             for ( int bColIndex = bStartColIndex; bColIndex <= bEndColIndex; bColIndex++) {
                 Row row = sheet.getRow( bRowIndex);
                 if ( row != null && row.getCell( bColIndex) != null) {
-                    blockCellType[rowIdx][colIdx] = row.getCell( bColIndex).getCellTypeEnum();
+                    blockCellType[rowIdx][colIdx] = row.getCell( bColIndex).getCellType();
                 } else {
                     blockCellType[rowIdx][colIdx] = CellType.BLANK;
                 }

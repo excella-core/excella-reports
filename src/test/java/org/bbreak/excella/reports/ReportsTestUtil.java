@@ -255,7 +255,7 @@ public class ReportsTestUtil {
                     Iterator<Cell> cellIterator = row.cellIterator();
                     while ( cellIterator.hasNext()) {
                         Cell cell = cellIterator.next();
-                        if ( cell.getCellTypeEnum() != CellType.BLANK) {
+                        if ( cell.getCellType() != CellType.BLANK) {
                             lastRowIndex = row.getRowNum();
                             break;
                         }
@@ -398,9 +398,9 @@ public class ReportsTestUtil {
         }
 
         // 型
-        if ( expected.getCellTypeEnum() != actual.getCellTypeEnum()) {
-            errors.add( new CheckMessage( "型[" + "セル(" + expected.getRowIndex() + "," + expected.getColumnIndex() + ")" + "]", getCellTypeString( expected.getCellTypeEnum()),
-                getCellTypeString( actual.getCellTypeEnum())));
+        if ( expected.getCellType() != actual.getCellType()) {
+            errors.add( new CheckMessage( "型[" + "セル(" + expected.getRowIndex() + "," + expected.getColumnIndex() + ")" + "]", getCellTypeString( expected.getCellType()),
+                getCellTypeString( actual.getCellType())));
             throw new ReportsCheckException( errors);
         }
 
@@ -721,7 +721,7 @@ public class ReportsTestUtil {
         String value = null;
 
         if ( cell != null) {
-            switch ( cell.getCellTypeEnum()) {
+            switch ( cell.getCellType()) {
                 case BLANK:
                     value = cell.getStringCellValue();
                     break;

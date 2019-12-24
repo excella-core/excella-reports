@@ -65,7 +65,7 @@ public class BreakAdapter extends ReportProcessAdaptor {
         for ( int colIndex = firstColNum; colIndex <= lastColNum; colIndex++) {
             Cell cell = row.getCell( colIndex);
             if ( cell != null) {
-                if ( cell.getCellTypeEnum() == CellType.STRING && cell.getStringCellValue().contains( BreakParamParser.DEFAULT_TAG)) {
+                if ( cell.getCellType() == CellType.STRING && cell.getStringCellValue().contains( BreakParamParser.DEFAULT_TAG)) {
                     // 改ページを挿入
                     if ( isInMergedRegion( sheet, row, cell)) {
                         setRowBreakMergedRegion( sheet, row, cell);
