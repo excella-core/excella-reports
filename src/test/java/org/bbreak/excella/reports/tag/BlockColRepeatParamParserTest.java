@@ -1,30 +1,23 @@
-/*************************************************************************
- *
- * Copyright 2009 by bBreak Systems.
- *
- * ExCella Reports - Excelファイルを利用した帳票ツール
- *
- * $Id: BlockColRepeatParamParserTest.java 173 2010-08-09 04:16:12Z ogiharasf $
- * $Revision: 173 $
- *
- * This file is part of ExCella Reports.
- *
- * ExCella Reports is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License version 3
- * only, as published by the Free Software Foundation.
- *
- * ExCella Reports is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License version 3 for more details
- * (a copy is included in the COPYING.LESSER file that accompanied this code).
- *
- * You should have received a copy of the GNU Lesser General Public License
- * version 3 along with ExCella Reports .  If not, see
- * <http://www.gnu.org/licenses/lgpl-3.0-standalone.html>
- * for a copy of the LGPLv3 License.
- *
- ************************************************************************/
+/*-
+ * #%L
+ * excella-reports
+ * %%
+ * Copyright (C) 2009 - 2019 bBreak Systems and contributors
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 package org.bbreak.excella.reports.tag;
 
 import static org.junit.Assert.*;
