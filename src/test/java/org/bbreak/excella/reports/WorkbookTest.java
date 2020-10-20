@@ -46,7 +46,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @since 1.0
  */
 @RunWith( Parameterized.class)
-public class WorkbookTest {
+public abstract class WorkbookTest {
 
     /**
      * ログ
