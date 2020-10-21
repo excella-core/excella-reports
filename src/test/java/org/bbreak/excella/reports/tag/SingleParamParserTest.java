@@ -79,27 +79,27 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
         // byte
         info.addParam( SingleParamParser.DEFAULT_TAG, "test01", ( byte) 1);
         // Byte
-        info.addParam( SingleParamParser.DEFAULT_TAG, "test02", new Byte( "1"));
+        info.addParam( SingleParamParser.DEFAULT_TAG, "test02", Byte.valueOf( "1"));
         // short
         info.addParam( SingleParamParser.DEFAULT_TAG, "test03", ( short) 2);
         // Short
-        info.addParam( SingleParamParser.DEFAULT_TAG, "test04", new Short( "2"));
+        info.addParam( SingleParamParser.DEFAULT_TAG, "test04", Short.valueOf( "2"));
         // int
         info.addParam( SingleParamParser.DEFAULT_TAG, "test05", 3);
         // Integer
-        info.addParam( SingleParamParser.DEFAULT_TAG, "test06", new Integer( "3"));
+        info.addParam( SingleParamParser.DEFAULT_TAG, "test06", Integer.valueOf( "3"));
         // long
         info.addParam( SingleParamParser.DEFAULT_TAG, "test07", 4L);
         // Long
-        info.addParam( SingleParamParser.DEFAULT_TAG, "test08", new Long( "4"));
+        info.addParam( SingleParamParser.DEFAULT_TAG, "test08", Long.valueOf( "4"));
         // float
         info.addParam( SingleParamParser.DEFAULT_TAG, "test09", 5.1f);
         // Float
-        info.addParam( SingleParamParser.DEFAULT_TAG, "test10", new Float( "5.1"));
+        info.addParam( SingleParamParser.DEFAULT_TAG, "test10", Float.valueOf( "5.1"));
         // double
         info.addParam( SingleParamParser.DEFAULT_TAG, "test11", 6.1);
         // Double
-        info.addParam( SingleParamParser.DEFAULT_TAG, "test12", new Double( 6.1));
+        info.addParam( SingleParamParser.DEFAULT_TAG, "test12", Double.valueOf( 6.1));
         // BigInteger
         info.addParam( SingleParamParser.DEFAULT_TAG, "test13", new BigInteger( "7"));
         // BigDecimal
@@ -137,17 +137,17 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
         infoP.addParam( "$P", "test", "test!");
         infoP.addParam( "$P", "テスト", "テストです!");
         infoP.addParam( "$P", "test01", ( byte) 1);
-        infoP.addParam( "$P", "test02", new Byte( "1"));
+        infoP.addParam( "$P", "test02", Byte.valueOf( "1"));
         infoP.addParam( "$P", "test03", ( short) 2);
-        infoP.addParam( "$P", "test04", new Short( "2"));
+        infoP.addParam( "$P", "test04", Short.valueOf( "2"));
         infoP.addParam( "$P", "test05", 3);
-        infoP.addParam( "$P", "test06", new Integer( "3"));
+        infoP.addParam( "$P", "test06", Integer.valueOf( "3"));
         infoP.addParam( "$P", "test07", 4L);
-        infoP.addParam( "$P", "test08", new Long( "4"));
+        infoP.addParam( "$P", "test08", Long.valueOf( "4"));
         infoP.addParam( "$P", "test09", 5.1f);
-        infoP.addParam( "$P", "test10", new Float( "5.1"));
+        infoP.addParam( "$P", "test10", Float.valueOf( "5.1"));
         infoP.addParam( "$P", "test11", 6.1);
-        infoP.addParam( "$P", "test12", new Double( 6.1));
+        infoP.addParam( "$P", "test12", Double.valueOf( 6.1));
         infoP.addParam( "$P", "test13", new BigInteger( "7"));
         infoP.addParam( "$P", "test14", new BigDecimal( "8.5"));
         cal.clear();
