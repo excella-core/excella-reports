@@ -20,8 +20,8 @@
 
 package org.bbreak.excella.reports.exporter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Date;
@@ -33,7 +33,7 @@ import org.bbreak.excella.core.BookData;
 import org.bbreak.excella.core.exception.ExportException;
 import org.bbreak.excella.reports.ReportsTestUtil;
 import org.bbreak.excella.reports.model.ConvertConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link org.bbreak.excella.reports.exporter.ExcelExporter} のためのテスト・クラス。

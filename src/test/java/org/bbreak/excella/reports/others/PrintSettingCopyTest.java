@@ -36,9 +36,7 @@ import org.bbreak.excella.reports.model.ReportSheet;
 import org.bbreak.excella.reports.processor.ReportProcessor;
 import org.bbreak.excella.reports.processor.ReportsCheckException;
 import org.bbreak.excella.reports.util.ReportsUtil;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * テンプレートをシートコピーした時の印刷設定確認のためのテストクラス
@@ -61,20 +59,6 @@ public class PrintSettingCopyTest {
      * 複数テンプレートの場合の2枚目のテンプレートシートのコピー数
      */
     private static final Integer PLURAL_COPY_SECOND_NUM_OF_SHEETS = 4;
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
 
     /**
      * 印刷設定付のコピーをテストし、ファイルを出力します

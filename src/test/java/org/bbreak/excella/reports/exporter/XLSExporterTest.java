@@ -20,9 +20,10 @@
 
 package org.bbreak.excella.reports.exporter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +36,7 @@ import org.bbreak.excella.core.BookData;
 import org.bbreak.excella.core.exception.ExportException;
 import org.bbreak.excella.reports.ReportsTestUtil;
 import org.bbreak.excella.reports.model.ConvertConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link org.bbreak.excella.reports.exporter.XLSExporter} のためのテスト・クラス。
@@ -60,43 +61,31 @@ public class XLSExporterTest {
 
         String filePath = null;
 
-        Workbook wb = new HSSFWorkbook();
+        Workbook xlsWorkbook= new HSSFWorkbook();
         // XLS
         filePath = tmpDirPath + (new Date()).getTime() + exporter.getExtention();
         exporter.setFilePath( filePath);
-        exporter.output( wb, new BookData(), configuration);
+        exporter.output( xlsWorkbook, new BookData(), configuration);
         File file = new File( exporter.getFilePath());
         assertTrue( file.exists());
 
-        wb = new XSSFWorkbook();
+        Workbook xlsxWorkbook = new XSSFWorkbook();
         // XLSX
-        try {
-            filePath = tmpDirPath + (new Date()).getTime() + exporter.getExtention();
-            exporter.setFilePath( filePath);
-            exporter.output( wb, null, null);
-
-            fail( "XLSXは解析不可");
-        } catch ( IllegalArgumentException e) {
-            // OK
-        }
-
-        // Exceptionを発生させる
-        wb = new HSSFWorkbook();
         filePath = tmpDirPath + (new Date()).getTime() + exporter.getExtention();
         exporter.setFilePath( filePath);
-        exporter.output( wb, new BookData(), configuration);
+        assertThrows( IllegalArgumentException.class, () -> exporter.output( xlsxWorkbook, null, null));
+
+        // Exceptionを発生させる
+        Workbook xlsWorkbook2 = new HSSFWorkbook();
+        filePath = tmpDirPath + (new Date()).getTime() + exporter.getExtention();
+        exporter.setFilePath( filePath);
+        exporter.output( xlsWorkbook2, new BookData(), configuration);
 
         file = new File( exporter.getFilePath());
         file.setReadOnly();
-        try {
-            exporter.output( wb, new BookData(), configuration);
-            fail( "例外未発生");
-        } catch ( Exception e) {
-            if ( e.getCause() instanceof IOException) {
-                // OK
-            } else {
-                fail( e.toString());
-            }
+        ExportException ee = assertThrows( ExportException.class, () -> exporter.output( xlsWorkbook2, new BookData(), configuration));
+        if ( !(ee.getCause() instanceof IOException)) {
+            fail(ee);
         }
 
     }

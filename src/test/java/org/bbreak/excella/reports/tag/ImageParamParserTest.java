@@ -20,8 +20,8 @@
 
 package org.bbreak.excella.reports.tag;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,12 +39,14 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.core.util.PoiUtil;
 import org.bbreak.excella.reports.ReportsTestUtil;
+import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.model.ParamInfo;
 import org.bbreak.excella.reports.processor.ReportsCheckException;
 import org.bbreak.excella.reports.processor.ReportsParserInfo;
 import org.bbreak.excella.reports.processor.ReportsWorkbookTest;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * {@link org.bbreak.excella.reports.tag.ImageParamParser} のためのテスト・クラス。
@@ -79,15 +81,6 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
     private static final int PLURAL_COPY_SECOND_NUM_OF_SHEETS = 2;
 
     /**
-     * コンストラクタ
-     * 
-     * @param version バージョン
-     */
-    public ImageParamParserTest( String version) {
-        super( version);
-    }
-
-    /**
      * {@link org.bbreak.excella.reports.tag.ImageParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
      * のためのテスト・メソッド。
      * 
@@ -95,12 +88,13 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
      * @throws ReportsCheckException
      * @throws IOException
      */
-    @Test
-    public void testParseSheetCellObject() throws ParseException, ReportsCheckException, IOException {
+    @ParameterizedTest
+    @CsvSource( WorkbookTest.VERSIONS)
+    public void testParseSheetCellObject( String version) throws ParseException, ReportsCheckException, IOException {
         // -----------------------
         // □[正常系]通常解析
         // -----------------------
-        Workbook workbook = getWorkbook();
+        Workbook workbook = getWorkbook( version);
 
         Sheet sheet1 = workbook.getSheetAt( 0);
 
@@ -123,7 +117,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         }
 
         // 期待値ブックの読み込み
-        Workbook expectedWorkbook = getExpectedWorkbook();
+        Workbook expectedWorkbook = getExpectedWorkbook( version);
         Sheet expectedSheet = expectedWorkbook.getSheet( "Sheet1");
 
         try {
@@ -150,7 +144,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         // -----------------------
         // □[正常系]タグ変更
         // -----------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
 
         Sheet sheet2 = workbook.getSheetAt( 1);
 
@@ -173,7 +167,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         }
 
         // 期待値ブックの読み込み
-        expectedWorkbook = getExpectedWorkbook();
+        expectedWorkbook = getExpectedWorkbook( version);
         expectedSheet = expectedWorkbook.getSheet( "Sheet2");
 
         try {
@@ -209,26 +203,21 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         // -----------------------
         // ■[異常系]チェック
         // -----------------------
-        workbook = getWorkbook( path);
+        workbook = getWorkbookByPath( path);
 
         Sheet sheet3 = workbook.getSheetAt( 2);
 
-        parser = new ImageParamParser();
+        ImageParamParser parserForCheck = new ImageParamParser();
 
-        reportsParserInfo = new ReportsParserInfo();
-        reportsParserInfo.setParamInfo( createTestData( ImageParamParser.DEFAULT_TAG));
+        ReportsParserInfo parserInfoForCheck = new ReportsParserInfo();
+        parserInfoForCheck.setParamInfo( createTestData( ImageParamParser.DEFAULT_TAG));
 
-        try {
-            parseSheet( parser, sheet3, reportsParserInfo);
-            fail( "チェックにかかっていない");
-        } catch ( ParseException expected) {
-            // ok
-        }
+        assertThrows( ParseException.class, () -> parseSheet( parserForCheck, sheet3, parserInfoForCheck), "チェックにかかっていない");
 
         // -----------------------
         // □[正常系]必須パラメータがない場合
         // -----------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
 
         Sheet sheet4 = workbook.getSheetAt( 2);
 
@@ -240,7 +229,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         parseSheet( parser, sheet4, reportsParserInfo);
 
         // 期待値ブックの読み込み
-        expectedWorkbook = getExpectedWorkbook();
+        expectedWorkbook = getExpectedWorkbook( version);
         expectedSheet = expectedWorkbook.getSheet( "Sheet4");
 
         // チェック
@@ -249,7 +238,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         // ----------------------------------------------------------------------
         // □[正常系]1シート出力 / タグで複数画像 / 単一テンプレートを上書き
         // ----------------------------------------------------------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
 
         Sheet sheet5 = workbook.getSheetAt( INDEX_OF_SHEET5);
 
@@ -272,7 +261,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         }
 
         // 期待値ブックの読み込み
-        expectedWorkbook = getExpectedWorkbook();
+        expectedWorkbook = getExpectedWorkbook( version);
         expectedSheet = expectedWorkbook.getSheet( "Sheet5");
 
         try {
@@ -300,7 +289,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         // □[正常系]1シート出力 / タグで複数画像 / 単一テンプレートを1回コピー
         // ----------------------------------------------------------------------
 
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
 
         Sheet sheet6 = workbook.cloneSheet( INDEX_OF_SHEET5);
 
@@ -323,7 +312,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         }
 
         // 期待値ブックの読み込み
-        expectedWorkbook = getExpectedWorkbook();
+        expectedWorkbook = getExpectedWorkbook( version);
         expectedSheet = expectedWorkbook.cloneSheet( INDEX_OF_SHEET5);
 
         try {
@@ -351,7 +340,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         // □[正常系] 複数シート出力 / タグで複数画像 / 単一テンプレートを複数回コピー
         // ----------------------------------------------------------------------
 
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
 
         for ( int i = 1; i <= PLURAL_COPY_FIRST_NUM_OF_SHEETS; i++) {
 
@@ -377,7 +366,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         }
 
         // 期待値ブックの読み込み
-        expectedWorkbook = getExpectedWorkbook();
+        expectedWorkbook = getExpectedWorkbook( version);
         for ( int i = 1; i <= PLURAL_COPY_FIRST_NUM_OF_SHEETS; i++) {
             expectedSheet = expectedWorkbook.cloneSheet( INDEX_OF_SHEET5);
         }
@@ -412,7 +401,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         // □[正常系] 複数シート出力 / タグで複数画像 / 複数(2個)のテンプレートを複数回コピー
         // ----------------------------------------------------------------------
 
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
 
         Sheet sheet = null;
         int totalNumOfCopies = PLURAL_COPY_FIRST_NUM_OF_SHEETS + PLURAL_COPY_SECOND_NUM_OF_SHEETS;
@@ -444,7 +433,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         }
 
         // 期待値ブックの読み込み
-        expectedWorkbook = getExpectedWorkbook();
+        expectedWorkbook = getExpectedWorkbook( version);
         for ( int i = 1; i <= totalNumOfCopies; i++) {
             if ( i <= PLURAL_COPY_FIRST_NUM_OF_SHEETS) {
                 expectedSheet = expectedWorkbook.cloneSheet( INDEX_OF_SHEET5);

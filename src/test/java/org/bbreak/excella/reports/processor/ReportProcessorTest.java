@@ -20,7 +20,12 @@
 
 package org.bbreak.excella.reports.processor;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
@@ -38,6 +43,7 @@ import org.bbreak.excella.core.SheetParser;
 import org.bbreak.excella.core.exception.ExportException;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.reports.ReportsTestUtil;
+import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.exporter.ReportBookExporter;
 import org.bbreak.excella.reports.listener.ReportProcessAdaptor;
 import org.bbreak.excella.reports.listener.ReportProcessListener;
@@ -46,7 +52,9 @@ import org.bbreak.excella.reports.model.ParsedReportInfo;
 import org.bbreak.excella.reports.model.ReportBook;
 import org.bbreak.excella.reports.model.ReportSheet;
 import org.bbreak.excella.reports.tag.ReportsTagParser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * {@link org.bbreak.excella.reports.processor.ReportProcessor} のためのテスト・クラス。
@@ -66,14 +74,6 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
      */
     private List<String> processStrings = new ArrayList<String>();
 
-    /**
-     * コンストラクタ
-     * 
-     * @param version バージョン
-     */
-    public ReportProcessorTest( String version) {
-        super( version);
-    }
 
     /**
      * {@link org.bbreak.excella.reports.processor.ReportProcessor#ReportProcessor()}
@@ -120,10 +120,11 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
      * 
      * @throws Exception
      */
-    @Test
-    public void testProcess() throws Exception {
+    @ParameterizedTest
+    @CsvSource( WorkbookTest.VERSIONS)
+    public void testProcess( String version) throws Exception {
 
-        getWorkbook();
+        getWorkbook( version);
 
         ReportProcessor reportProcessor = new ReportProcessor();
         reportProcessor.addReportProcessListener( new CustomListener());
@@ -243,20 +244,15 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
         // --------------------------------------------------------------------------
         processStrings.clear();
 
-        // ブック１
-        book1 = new ReportBook( "test", tmpDirPath + "workbookout1", configurations);
+        // ブック
+        ReportBook unknownTemplateBook = new ReportBook( "test", tmpDirPath + "workbookout1", configurations);
         // book1.setCopyTemplate( true);
 
         // →シート１
         sheetC1 = new ReportSheet( "Sheet1", "CSheet1");
-        book1.addReportSheet( sheetC1);
+        unknownTemplateBook.addReportSheet( sheetC1);
 
-        try {
-            reportProcessor.process( book1);
-            fail( "FileNotFoundException expected, but no exception was thrown.");
-        } catch ( FileNotFoundException e) {
-            assertTrue( true);
-        }
+        assertThrows( FileNotFoundException.class, () -> reportProcessor.process( unknownTemplateBook));
         assertTrue( processStrings.isEmpty());
         
         // ---------------------------------------------------------------------------
@@ -350,19 +346,14 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
         configurations = new ConvertConfiguration[] {configuration, configuration2};
 
         // ブック１
-        book1 = new ReportBook( getFilepath(), tmpDirPath + "workbookout1", configurations);
+        ReportBook errorBook= new ReportBook( getFilepath(), tmpDirPath + "workbookout1", configurations);
         // book1.setCopyTemplate( true);
 
         // →シート１
         sheetC1 = new ReportSheet( "Sheet1", "CSheet1");
-        book1.addReportSheet( sheetC1);
+        errorBook.addReportSheet( sheetC1);
 
-        try {
-            reportProcessor.process( book1);
-            fail( "Exception expected, but no exception was thrown.");
-        } catch ( Exception e) {
-            assertTrue( true);
-        }
+        assertThrows( Exception.class, () -> reportProcessor.process( errorBook));
 
         exceptedProccess = new ArrayList<String>();
         exceptedProccess.add( "ブック解析前処理 CustomListener#preBookParse( Workbook workbook, ReportBook reportBook)");

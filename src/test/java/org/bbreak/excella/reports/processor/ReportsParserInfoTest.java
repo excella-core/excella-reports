@@ -20,9 +20,9 @@
 
 package org.bbreak.excella.reports.processor;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,9 +40,7 @@ import org.bbreak.excella.reports.model.ParamInfo;
 import org.bbreak.excella.reports.model.ReportBook;
 import org.bbreak.excella.reports.tag.ReportsTagParser;
 import org.bbreak.excella.reports.tag.SingleParamParser;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link org.bbreak.excella.reports.processor.ReportsParserInfo} のためのテスト・クラス。
@@ -50,20 +48,6 @@ import org.junit.Test;
  * @since 1.0
  */
 public class ReportsParserInfoTest {
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
 
     /**
      * {@link org.bbreak.excella.reports.processor.ReportsParserInfo#getParamInfo()} のためのテスト・メソッド。

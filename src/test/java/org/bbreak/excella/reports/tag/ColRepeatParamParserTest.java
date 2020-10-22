@@ -20,11 +20,11 @@
 
 package org.bbreak.excella.reports.tag;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.core.util.PoiUtil;
 import org.bbreak.excella.reports.ReportsTestUtil;
+import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.model.ConvertConfiguration;
 import org.bbreak.excella.reports.model.ParamInfo;
 import org.bbreak.excella.reports.model.ParsedReportInfo;
@@ -46,7 +47,9 @@ import org.bbreak.excella.reports.processor.ReportCreateHelper;
 import org.bbreak.excella.reports.processor.ReportsCheckException;
 import org.bbreak.excella.reports.processor.ReportsParserInfo;
 import org.bbreak.excella.reports.processor.ReportsWorkbookTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * {@link org.bbreak.excella.reports.tag.ColRepeatParamParser} のためのテスト・クラス。
@@ -55,24 +58,22 @@ import org.junit.Test;
  */
 public class ColRepeatParamParserTest extends ReportsWorkbookTest {
 
-    public ColRepeatParamParserTest( String version) {
-        super( version);
-    }
-
     /**
      * {@link org.bbreak.excella.reports.tag.ColRepeatParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
      * のためのテスト・メソッド。
      * 
      * @throws ParseException
      * @throws ReportsCheckException
+     * @throws IOException
      */
-    @Test
-    public void testParseSheetCellObject() throws ParseException, ReportsCheckException {
+    @ParameterizedTest
+    @CsvSource( WorkbookTest.VERSIONS)
+    public void testParseSheetCellObject( String version) throws ParseException, ReportsCheckException, IOException {
         Workbook workbook = null;
         // -----------------------
         // □[正常系]オプション指定なし
         // -----------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
         Sheet sheet1 = workbook.getSheetAt( 0);
 
         ReportBook reportBook = new ReportBook("",  "test", new ConvertConfiguration[] {});
@@ -114,13 +115,13 @@ public class ColRepeatParamParserTest extends ReportsWorkbookTest {
             }
         }
 
-        checkSheet( "Sheet1", sheet1, true);
+        checkSheet( "Sheet1", sheet1, true, version);
         // -----------------------
         // □[正常系]オプション指定
         // ・重複非表示
         // ・上限回数
         // -----------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
         Sheet sheet2 = workbook.getSheetAt( 1);
         // 解析処理
         results = parseSheet( parser, sheet2, reportsParserInfo);
@@ -136,13 +137,13 @@ public class ColRepeatParamParserTest extends ReportsWorkbookTest {
                 workbook.removeSheetAt( index);
             }
         }
-        checkSheet( "Sheet2", sheet2, true);
+        checkSheet( "Sheet2", sheet2, true, version);
 
         // -----------------------
         // □[正常系]オプション指定
         // ・シートリンク
         // -----------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
         Sheet sheet3 = workbook.getSheetAt( 2);
         // 解析処理
         results = parseSheet( parser, sheet3, reportsParserInfo);
@@ -158,14 +159,14 @@ public class ColRepeatParamParserTest extends ReportsWorkbookTest {
                 workbook.removeSheetAt( index);
             }
         }
-        checkSheet( "Sheet3", sheet3, true);
+        checkSheet( "Sheet3", sheet3, true, version);
 
         // -----------------------
         // □[異常系]チェック
         // ・必須パラメータなし：置換変数
         // ・シートハイパーリンク設定有無と重複非表示は重複不可
         // -----------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
         Sheet sheet4 = workbook.getSheetAt( 3);
         // 解析処理
         results = parseSheet( parser, sheet4, reportsParserInfo);
@@ -181,30 +182,21 @@ public class ColRepeatParamParserTest extends ReportsWorkbookTest {
                 workbook.removeSheetAt( index);
             }
         }
-        checkSheet( "Sheet4", sheet4, true);
+        checkSheet( "Sheet4", sheet4, true, version);
 
         Sheet sheet5 = workbook.getSheetAt( 4);
         // 解析処理
-        try {
-            results = parseSheet( parser, sheet5, reportsParserInfo);
-            fail( "シートハイパーリンク設定有無と重複非表示は重複不可チェックにかかっていない");
-        } catch ( ParseException expected) {
-            // ok
-        }
+        assertThrows( ParseException.class, () -> parseSheet( parser, sheet5, reportsParserInfo),
+            "シートハイパーリンク設定有無と重複非表示は重複不可チェックにかかっていない");
 
         // -----------------------
         // ■[異常系]チェック
         // ・エラーがあった場合
         // -----------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
         Sheet sheet6 = workbook.getSheetAt( 5);
         // 解析処理
-        try {
-            results = parseSheet( parser, sheet6, reportsParserInfo);
-            fail( "ParseException expected, but no exception was thrown.");
-        } catch ( ParseException e) {
-            assertTrue( e instanceof ParseException);
-        }
+        assertThrows( ParseException.class, () -> parseSheet( parser, sheet6, reportsParserInfo));
         
         // ------------------------------------------------------------
         // ■[異常系]
@@ -212,24 +204,20 @@ public class ColRepeatParamParserTest extends ReportsWorkbookTest {
         //   PoiUtil.getMergedAddressメソッドにて
         //   定義した想定例外が発生することの確認を行う
         // ------------------------------------------------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
         Sheet sheet7 = workbook.getSheetAt( 6);
         // 解析処理
-        try {
-            results = parseSheet( parser, sheet7, reportsParserInfo);
-            fail( "想定例外が発生せず");
-        } catch ( ParseException e) {
-            // org.bbreak.excella.core.util.PoiUtil#getMergedAddress( Sheet sheet, CellRangeAddress rangeAddress)
-            // でthrowした想定例外であることを確認する
-            assertTrue( e.getCause() instanceof IllegalArgumentException);
-            assertTrue( e.getMessage().contains("There are crossing merged regions in the range."));
-        }
+        ParseException pe = assertThrows( ParseException.class, () -> parseSheet( parser, sheet7, reportsParserInfo));
+        // org.bbreak.excella.core.util.PoiUtil#getMergedAddress( Sheet sheet, CellRangeAddress rangeAddress)
+        // でthrowした想定例外であることを確認する
+        assertTrue( pe.getCause() instanceof IllegalArgumentException);
+        assertTrue( pe.getMessage().contains("There are crossing merged regions in the range."));
         
         // ------------------------------------------------------------
         // □[正常系]
         // ・列方向の結合セル（サイズ２）が存在する場合の正常終了確認
         // ------------------------------------------------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
         Sheet sheet8 = workbook.getSheetAt( 7);
         // 解析処理
         results = parseSheet( parser, sheet8, reportsParserInfo);
@@ -245,13 +233,13 @@ public class ColRepeatParamParserTest extends ReportsWorkbookTest {
                 workbook.removeSheetAt( index);
             }
         }
-        checkSheet( "Sheet8", sheet8, true);
+        checkSheet( "Sheet8", sheet8, true, version);
         
         // ------------------------------------------------------------
         // □[正常系]
         // ・列方向の結合セル（サイズ３）が存在する場合の正常終了確認
         // ------------------------------------------------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
         Sheet sheet9 = workbook.getSheetAt( 8);
         // 解析処理
         results = parseSheet( parser, sheet9, reportsParserInfo);
@@ -267,7 +255,7 @@ public class ColRepeatParamParserTest extends ReportsWorkbookTest {
                 workbook.removeSheetAt( index);
             }
         }
-        checkSheet( "Sheet9", sheet9, true);
+        checkSheet( "Sheet9", sheet9, true, version);
         
         // ------------------------------------------------------------
         // ■[異常系]
@@ -275,25 +263,20 @@ public class ColRepeatParamParserTest extends ReportsWorkbookTest {
         //   PoiUtil.getMergedAddressメソッドにて
         //   定義した想定例外が発生することの確認を行う
         // ------------------------------------------------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
         Sheet sheet10 = workbook.getSheetAt( 9);
         // 解析処理
-        results = null;
-        try {
-            results = parseSheet( parser, sheet10, reportsParserInfo);
-            fail( "想定例外が発生せず");
-        } catch ( ParseException e) {
-            // org.bbreak.excella.core.util.PoiUtil#getMergedAddress( Sheet sheet, CellRangeAddress rangeAddress)
-            // でthrowした想定例外であることを確認する
-            assertTrue( e.getCause() instanceof IllegalArgumentException);
-            assertTrue( e.getMessage().contains("There are crossing merged regions in the range."));
-        }
+        pe = assertThrows( ParseException.class, () -> parseSheet( parser, sheet10, reportsParserInfo));
+        // org.bbreak.excella.core.util.PoiUtil#getMergedAddress( Sheet sheet, CellRangeAddress rangeAddress)
+        // でthrowした想定例外であることを確認する
+        assertTrue( pe.getCause() instanceof IllegalArgumentException);
+        assertTrue( pe.getMessage().contains("There are crossing merged regions in the range."));
 
         // ------------------------------------------------------------
         // □[正常系]
         // ・最低繰返回数
         // ------------------------------------------------------------
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
         Sheet sheet15 = workbook.getSheetAt( 14);
         // 解析処理
         results = parseSheet( parser, sheet15, reportsParserInfo);
@@ -311,7 +294,7 @@ public class ColRepeatParamParserTest extends ReportsWorkbookTest {
             }
         }
         
-        checkSheet( "Sheet15", sheet15, true);
+        checkSheet( "Sheet15", sheet15, true, version);
     }
 
     /**
@@ -337,11 +320,11 @@ public class ColRepeatParamParserTest extends ReportsWorkbookTest {
         assertEquals( "てすと", parser.getTag());
     }
 
-    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel)
-            throws ReportsCheckException {
+    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel, String version)
+            throws ReportsCheckException, IOException {
 
         // 期待値ブックの読み込み
-        Workbook expectedWorkbook = getExpectedWorkbook();
+        Workbook expectedWorkbook = getExpectedWorkbook( version);
         Sheet expectedSheet = expectedWorkbook.getSheet( expectedSheetName);
 
         try {

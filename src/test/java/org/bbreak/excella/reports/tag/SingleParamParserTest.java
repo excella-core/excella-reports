@@ -20,8 +20,9 @@
 
 package org.bbreak.excella.reports.tag;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
@@ -30,11 +31,14 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.reports.ReportsTestUtil;
+import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.model.ParamInfo;
 import org.bbreak.excella.reports.processor.ReportsCheckException;
 import org.bbreak.excella.reports.processor.ReportsParserInfo;
 import org.bbreak.excella.reports.processor.ReportsWorkbookTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * {@link org.bbreak.excella.reports.tag.SingleParamParser} のためのテスト・クラス。
@@ -44,29 +48,22 @@ import org.junit.Test;
 public class SingleParamParserTest extends ReportsWorkbookTest {
 
     /**
-     * コンストラクタ
-     * 
-     * @param version バージョン
-     */
-    public SingleParamParserTest( String version) {
-        super( version);
-    }
-
-    /**
      * {@link org.bbreak.excella.reports.tag.SingleParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
      * のためのテスト・メソッド。
      * 
      * @throws ParseException
      * @throws ReportsCheckException
+     * @throws IOException
      */
-    @Test
-    public void testParseSheetCellObject() throws ParseException, ReportsCheckException {
+    @ParameterizedTest
+    @CsvSource( WorkbookTest.VERSIONS)
+    public void testParseSheetCellObject( String version) throws ParseException, ReportsCheckException, IOException {
 
         // -----------------------
         // □[正常系]通常解析
         // -----------------------
 
-        Workbook workbook = getWorkbook();
+        Workbook workbook = getWorkbook( version);
 
         Sheet sheet1 = workbook.getSheetAt( 0);
 
@@ -120,7 +117,7 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
         parseSheet( parser, sheet1, reportsParserInfo);
 
         // 期待値ブックの読み込み
-        Workbook expectedWorkbook = getExpectedWorkbook();
+        Workbook expectedWorkbook = getExpectedWorkbook( version);
         Sheet expectedSheet = expectedWorkbook.getSheet( "Sheet1");
 
         // チェック
@@ -130,7 +127,7 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
         // □[正常系]タグ名の変更
         // -----------------------
 
-        workbook = getWorkbook();
+        workbook = getWorkbook( version);
 
         // テストデータ
         ParamInfo infoP = new ParamInfo();
@@ -166,7 +163,7 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
         parseSheet( parser, sheet2, reportsParserInfo);
 
         // 期待値ブックの読み込み
-        expectedWorkbook = getExpectedWorkbook();
+        expectedWorkbook = getExpectedWorkbook( version);
         expectedSheet = expectedWorkbook.getSheet( "Sheet2");
 
         // チェック
@@ -183,7 +180,7 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
             , reportsParserInfo);
 
         // 期待値ブックの読み込み
-        expectedWorkbook = getExpectedWorkbook();
+        expectedWorkbook = getExpectedWorkbook( version);
         expectedSheet = expectedWorkbook.getSheet( "Sheet2");
 
         // チェック
@@ -200,7 +197,7 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
         parseSheet( parser, sheet3, reportsParserInfo);
 
         // 期待値ブックの読み込み
-        expectedWorkbook = getExpectedWorkbook();
+        expectedWorkbook = getExpectedWorkbook( version);
         expectedSheet = expectedWorkbook.getSheet( "Sheet3");
 
         // チェック

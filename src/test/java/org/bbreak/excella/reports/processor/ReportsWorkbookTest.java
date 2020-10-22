@@ -22,7 +22,6 @@ package org.bbreak.excella.reports.processor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -42,15 +41,7 @@ import org.bbreak.excella.reports.tag.ReportsTagParser;
 
 public abstract class ReportsWorkbookTest extends WorkbookTest {
 
-    /** Excelファイルのバージョン */
-    protected String version = null;
-
-    public ReportsWorkbookTest( String version) {
-        super( version);
-        this.version = version;
-    }
-
-    protected Workbook getExpectedWorkbook() throws IOException {
+    protected Workbook getExpectedWorkbook( String version) throws IOException {
 
         Workbook workbook = null;
 
@@ -66,7 +57,7 @@ public abstract class ReportsWorkbookTest extends WorkbookTest {
         URL url = this.getClass().getResource( filename);
         String path = URLDecoder.decode( url.getFile(), "UTF-8");
             
-        workbook = getWorkbook(path);
+        workbook = getWorkbookByPath(path);
         return workbook;
     }
 
@@ -96,7 +87,7 @@ public abstract class ReportsWorkbookTest extends WorkbookTest {
     }
     
     
-    protected Workbook getWorkbook(String filepath) throws IOException {
+    protected Workbook getWorkbookByPath(String filepath) throws IOException {
 
         Workbook workbook = null;
 

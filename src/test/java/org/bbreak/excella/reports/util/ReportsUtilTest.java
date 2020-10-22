@@ -20,11 +20,11 @@
 
 package org.bbreak.excella.reports.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -48,6 +48,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.core.util.PoiUtil;
+import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.exporter.ExcelExporter;
 import org.bbreak.excella.reports.model.ConvertConfiguration;
 import org.bbreak.excella.reports.model.ParamInfo;
@@ -62,7 +63,9 @@ import org.bbreak.excella.reports.tag.ColRepeatParamParser;
 import org.bbreak.excella.reports.tag.ReportsTagParser;
 import org.bbreak.excella.reports.tag.RowRepeatParamParser;
 import org.bbreak.excella.reports.tag.SingleParamParser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * {@link org.bbreak.excella.reports.util.ReportsUtil} のためのテスト・クラス。
@@ -70,10 +73,6 @@ import org.junit.Test;
  * @since 1.0
  */
 public class ReportsUtilTest extends ReportsWorkbookTest {
-
-    public ReportsUtilTest( String version) {
-        super( version);
-    }
 
     /**
      * {@link org.bbreak.excella.reports.util.ReportsUtil#getReportSheet(String, org.bbreak.excella.reports.model.ReportBook)} のためのテスト・メソッド。
@@ -459,36 +458,25 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
         assertEquals( 3, pos[0]);
         assertEquals( 5, pos[1]);
 
-        try {
-            pos = ReportsUtil.getCellIndex( "A:C", "");
-            fail( "ParseExcepion excepted, but no exception was thrown.");
-        } catch ( ParseException e) {
-            assertTrue( true);
-        }
+        assertThrows( ParseException.class, () -> ReportsUtil.getCellIndex( "A:C", ""));
 
-        try {
-            pos = ReportsUtil.getCellIndex( "TEST", "");
-            fail( "ParseExcepion excepted, but no exception was thrown.");
-        } catch ( ParseException e) {
-            assertTrue( true);
-        }
+        assertThrows( ParseException.class, () -> ReportsUtil.getCellIndex( "TEST", ""));
 
-        try {
-            pos = ReportsUtil.getCellIndex( "100", "");
-            fail( "ParseExcepion excepted, but no exception was thrown.");
-        } catch ( ParseException e) {
-            assertTrue( true);
-        }
+        assertThrows( ParseException.class, () -> ReportsUtil.getCellIndex( "100", ""));
 
     }
 
     /**
-     * {@link org.bbreak.excella.reports.util.ReportsTagUtil#getBlockCellValue(org.apache.poi.ss.usermodel.Sheet, int, int, int, int)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.util.ReportsTagUtil#getBlockCellValue(org.apache.poi.ss.usermodel.Sheet, int, int, int, int)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IOException
      */
-    @Test
-    public void testGetBlockCellValue() {
+    @ParameterizedTest
+    @CsvSource(WorkbookTest.VERSIONS)
+    public void testGetBlockCellValue(String version) throws IOException {
 
-        Workbook workbook = getWorkbook();
+        Workbook workbook = getWorkbook( version);
         Sheet sheet = workbook.getSheetAt( 0);
 
         Object[][] cellValues = ReportsUtil.getBlockCellValue( sheet, 0, 4, 0, 3);
@@ -506,11 +494,15 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.util.ReportsTagUtil#getBlockCellStyle(org.apache.poi.ss.usermodel.Sheet, int, int, int, int)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.util.ReportsTagUtil#getBlockCellStyle(org.apache.poi.ss.usermodel.Sheet, int, int, int, int)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IOException
      */
-    @Test
-    public void testGetBlockCellStyle() {
-        Workbook workbook = getWorkbook();
+    @ParameterizedTest
+    @CsvSource(WorkbookTest.VERSIONS)
+    public void testGetBlockCellStyle(String version) throws IOException {
+        Workbook workbook = getWorkbook( version);
         Sheet sheet = workbook.getSheetAt( 0);
 
         Object[][] cellStyles = ReportsUtil.getBlockCellStyle( sheet, 0, 4, 0, 3);
@@ -528,12 +520,16 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
     }
     
     /**
-     * {@link org.bbreak.excella.reports.util.ReportsUtil#getRowHeight(org.apache.poi.ss.usermodel.Sheet, int, int)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.util.ReportsUtil#getRowHeight(org.apache.poi.ss.usermodel.Sheet, int, int)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IOException
      */
-    @Test
-    public void testGetRowHeight() {
+    @ParameterizedTest
+    @CsvSource(WorkbookTest.VERSIONS)
+    public void testGetRowHeight(String version) throws IOException {
         
-        Workbook workbook = getWorkbook();
+        Workbook workbook = getWorkbook( version);
         Sheet sheet = workbook.getSheetAt( 0);
         
         Row row0 = sheet.getRow(0);
@@ -554,13 +550,18 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
     }
     
     /**
-     * {@link org.bbreak.excella.reports.util.ReportsUtil#isEmptyRow( int[] rowCellTypes, Object[] rowCellValues, CellStyle[] rowCellStyles){}}のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.util.ReportsUtil#isEmptyRow( int[]
+     * rowCellTypes, Object[] rowCellValues, CellStyle[]
+     * rowCellStyles){}}のためのテスト・メソッド。
+     * 
+     * @throws IOException
      */
-    @Test
-    public void testIsEmptyRow() {
+    @ParameterizedTest
+    @CsvSource(WorkbookTest.VERSIONS)
+    public void testIsEmptyRow(String version) throws IOException {
       
         // テストシートの取得
-        Workbook workbook = getWorkbook();
+        Workbook workbook = getWorkbook( version);
         Sheet sheet2 = workbook.getSheetAt( 1);
 
         // 開始列設定 ※初期値＝0（Ａ列）
@@ -606,13 +607,17 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
     }
     
     /**
-     * {@link org.bbreak.excella.reports.util.ReportsUtil#isEmptyCell( int cellType, Object cellValue, CellStyle cellStyle}のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.util.ReportsUtil#isEmptyCell( int cellType,
+     * Object cellValue, CellStyle cellStyle}のためのテスト・メソッド。
+     * 
+     * @throws IOException
      */
-    @Test
-    public void testIsEmptyCell() {
+    @ParameterizedTest
+    @CsvSource(WorkbookTest.VERSIONS)
+    public void testIsEmptyCell(String version) throws IOException {
       
         // テストシートの取得
-        Workbook workbook = getWorkbook();
+        Workbook workbook = getWorkbook( version);
         Sheet sheet2 = workbook.getSheetAt( 1);
 
         // 開始列設定 ※初期値＝0（Ａ列）

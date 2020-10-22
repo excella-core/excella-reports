@@ -20,22 +20,26 @@
 
 package org.bbreak.excella.reports.tag;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.bbreak.excella.core.exception.ParseException;
+import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.model.ParsedReportInfo;
 import org.bbreak.excella.reports.processor.CellObject;
 import org.bbreak.excella.reports.processor.ReportCreateHelper;
 import org.bbreak.excella.reports.processor.ReportsParserInfo;
 import org.bbreak.excella.reports.processor.ReportsWorkbookTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * {@link org.bbreak.excella.reports.tag.BreakParamParser} のためのテスト・クラス。
@@ -45,24 +49,17 @@ import org.junit.Test;
 public class BreakParamParserTest extends ReportsWorkbookTest {
 
     /**
-     * コンストラクタ
-     * 
-     * @param version Excelバージョン
-     */
-    public BreakParamParserTest( String version) {
-        super( version);
-    }
-
-    /**
      * {@link org.bbreak.excella.reports.tag.BreakParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
      * のためのテスト・メソッド。
      * 
      * @throws ParseException
+     * @throws IOException
      */
-    @Test
-    public void testParseSheetCellObject() throws ParseException {
+    @ParameterizedTest
+    @CsvSource( WorkbookTest.VERSIONS)
+    public void testParseSheetCellObject( String version) throws ParseException, IOException {
 
-        Workbook workbook = getWorkbook();
+        Workbook workbook = getWorkbook( version);
         Sheet sheet1 = workbook.getSheetAt( 0);
 
         BreakParamParser parser = new BreakParamParser();

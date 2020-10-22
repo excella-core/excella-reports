@@ -20,9 +20,9 @@
 
 package org.bbreak.excella.reports.tag;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.core.util.PoiUtil;
+import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.ReportsTestUtil;
 import org.bbreak.excella.reports.model.ConvertConfiguration;
 import org.bbreak.excella.reports.model.ParamInfo;
@@ -46,7 +47,9 @@ import org.bbreak.excella.reports.processor.ReportCreateHelper;
 import org.bbreak.excella.reports.processor.ReportsCheckException;
 import org.bbreak.excella.reports.processor.ReportsParserInfo;
 import org.bbreak.excella.reports.processor.ReportsWorkbookTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * {@link org.bbreak.excella.reports.tag.SumParamParser} のためのテスト・クラス。
@@ -55,25 +58,23 @@ import org.junit.Test;
  */
 public class SumParamParserTest extends ReportsWorkbookTest {
 
-    public SumParamParserTest( String version) {
-        super( version);
-    }
-
     /**
      * {@link org.bbreak.excella.reports.tag.SumParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
      * のためのテスト・メソッド。
      * 
      * @throws ParseException
      * @throws ReportsCheckException
+     * @throws IOException
      */
-    @Test
-    public void testParseSheetCellObject() throws ParseException, ReportsCheckException {
+    @ParameterizedTest
+    @CsvSource( WorkbookTest.VERSIONS)
+    public void testParseSheetCellObject( String version) throws ParseException, ReportsCheckException, IOException {
 
         // -----------------------
         // □[正常系]通常解析
         // -----------------------
 
-        Workbook workbook = getWorkbook();
+        Workbook workbook = getWorkbook( version);
 
         Sheet sheet1 = workbook.getSheetAt( 0);
 
@@ -124,7 +125,7 @@ public class SumParamParserTest extends ReportsWorkbookTest {
             }
         }
 
-        checkSheet( "Sheet1", sheet1, true);
+        checkSheet( "Sheet1", sheet1, true, version);
 
     }
 
@@ -146,11 +147,11 @@ public class SumParamParserTest extends ReportsWorkbookTest {
         assertEquals( "テスト", paser.getTag());
     }
 
-    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel)
-            throws ReportsCheckException {
+    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel, String version)
+            throws ReportsCheckException, IOException {
 
         // 期待値ブックの読み込み
-        Workbook expectedWorkbook = getExpectedWorkbook();
+        Workbook expectedWorkbook = getExpectedWorkbook( version);
         Sheet expectedSheet = expectedWorkbook.getSheet( expectedSheetName);
 
         try {

@@ -20,14 +20,16 @@
 
 package org.bbreak.excella.reports.model;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link org.bbreak.excella.reports.model.ConvertConfiguration} のためのテスト・クラス。
@@ -41,14 +43,7 @@ public class ConvertConfigurationTest {
     /**
      * @throws java.lang.Exception
      */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         configuration = new ConvertConfiguration( "Test");
     }
