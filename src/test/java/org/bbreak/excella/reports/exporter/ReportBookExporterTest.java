@@ -20,9 +20,10 @@
 
 package org.bbreak.excella.reports.exporter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.bbreak.excella.core.BookData;
@@ -30,7 +31,9 @@ import org.bbreak.excella.core.exception.ExportException;
 import org.bbreak.excella.core.util.PoiUtil;
 import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.model.ConvertConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * {@link org.bbreak.excella.reports.exporter.ReportBookExporter} のためのテスト・クラス。
@@ -39,17 +42,18 @@ import org.junit.Test;
  */
 public class ReportBookExporterTest extends WorkbookTest {
 
-    public ReportBookExporterTest( String version) {
-        super( version);
-    }
-
     /**
-     * {@link org.bbreak.excella.reports.exporter.ReportBookExporter#export(org.apache.poi.ss.usermodel.Workbook, org.bbreak.excella.core.BookData)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.exporter.ReportBookExporter#export(org.apache.poi.ss.usermodel.Workbook, org.bbreak.excella.core.BookData)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws ExportException
+     * @throws IOException
      */
-    @Test
-    public void testExport() {
+    @ParameterizedTest
+    @CsvSource( WorkbookTest.VERSIONS)
+    public void testExport( String version) throws ExportException, IOException {
 
-        Workbook book = getWorkbook();
+        Workbook book = getWorkbook( version);
 
         ReportBookExporter exporter = new ReportBookExporter() {
 
@@ -70,12 +74,7 @@ public class ReportBookExporterTest extends WorkbookTest {
         };
 
         exporter.setConfiguration( new ConvertConfiguration( ""));
-        try {
-            exporter.export( book, null);
-        } catch ( ExportException e) {
-            e.printStackTrace();
-            fail( e.toString());
-        }
+        exporter.export( book, null);
 
         assertEquals( 4, book.getNumberOfSheets());
 

@@ -20,14 +20,14 @@
 
 package org.bbreak.excella.reports.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link org.bbreak.excella.reports.model.ParamInfo} のためのテスト・クラス。
@@ -41,7 +41,7 @@ public class ParamInfoTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         info = new ParamInfo();
         info.addParam( "$", "Test0", "Data0");

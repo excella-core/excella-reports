@@ -20,8 +20,8 @@
 
 package org.bbreak.excella.reports.exporter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Date;
@@ -33,7 +33,7 @@ import org.bbreak.excella.core.BookData;
 import org.bbreak.excella.core.exception.ExportException;
 import org.bbreak.excella.reports.ReportsTestUtil;
 import org.bbreak.excella.reports.model.ConvertConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link org.bbreak.excella.reports.exporter.ExcelExporter} のためのテスト・クラス。
@@ -53,10 +53,13 @@ public class ExcelExporterTest {
     
     
     /**
-     * {@link org.bbreak.excella.reports.exporter.ExcelExporter#output(org.apache.poi.ss.usermodel.Workbook, org.bbreak.excella.core.BookData, org.bbreak.excella.reports.model.ConvertConfiguration)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.exporter.ExcelExporter#output(org.apache.poi.ss.usermodel.Workbook, org.bbreak.excella.core.BookData, org.bbreak.excella.reports.model.ConvertConfiguration)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws ExportException
      */
     @Test
-    public void testOutput() {
+    public void testOutput() throws ExportException {
         
         ExcelExporter exporter = new ExcelExporter();
         String filePath = null;
@@ -65,27 +68,18 @@ public class ExcelExporterTest {
         configuration = new ConvertConfiguration(ExcelExporter.EXTENTION_XLS);
         filePath = tmpDirPath + (new Date()).getTime() + exporter.getExtention();
         exporter.setFilePath( filePath);
-        try {
-            exporter.output( hssfWb, new BookData(), configuration);
-            File file = new File(exporter.getFilePath());
-            assertTrue( file.exists());
-        } catch ( ExportException e) {
-            e.printStackTrace();
-        }
+        exporter.output( hssfWb, new BookData(), configuration);
+        File file = new File(exporter.getFilePath());
+        assertTrue( file.exists());
         
         
         //XLSX
         configuration = new ConvertConfiguration(ExcelExporter.EXTENTION_XLSX);
         filePath = tmpDirPath + (new Date()).getTime() + exporter.getExtention();
         exporter.setFilePath( filePath);
-        try {
-            exporter.output( xssfWb, new BookData(), configuration);
-            File file = new File(exporter.getFilePath());
-            assertTrue( file.exists());
-            
-        } catch ( ExportException e) {
-            e.printStackTrace();
-        }
+        exporter.output( xssfWb, new BookData(), configuration);
+        file = new File(exporter.getFilePath());
+        assertTrue( file.exists());
         
         
         

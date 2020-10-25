@@ -20,8 +20,6 @@
 
 package org.bbreak.excella.reports.listener;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,13 +31,13 @@ import org.bbreak.excella.core.SheetParser;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.core.util.PoiUtil;
 import org.bbreak.excella.reports.ReportsTestUtil;
+import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.processor.ReportCreateHelper;
 import org.bbreak.excella.reports.processor.ReportsCheckException;
 import org.bbreak.excella.reports.processor.ReportsWorkbookTest;
 import org.bbreak.excella.reports.tag.ReportsTagParser;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * {@link org.bbreak.excella.reports.listener.BreakAdapter} のためのテスト・クラス。
@@ -49,35 +47,18 @@ import org.junit.Test;
 public class BreakAdapterTest extends ReportsWorkbookTest {
 
     /**
-     * コンストラクタ
+     * {@link org.bbreak.excella.reports.listener.BreakAdapter#postParse(org.apache.poi.ss.usermodel.Sheet, org.bbreak.excella.core.SheetParser, org.bbreak.excella.core.SheetData)}
+     * のためのテスト・メソッド。
      * 
-     * @param version
+     * @throws ParseException
+     * @throws ReportsCheckException
+     * @throws IOException
      */
-    public BreakAdapterTest( String version) {
-        super( version);
-    }
+    @ParameterizedTest
+    @CsvSource( WorkbookTest.VERSIONS)
+    public void testPostParse( String version) throws ParseException, ReportsCheckException, IOException {
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    /**
-     * {@link org.bbreak.excella.reports.listener.BreakAdapter#postParse(org.apache.poi.ss.usermodel.Sheet, org.bbreak.excella.core.SheetParser, org.bbreak.excella.core.SheetData)} のためのテスト・メソッド。
-     */
-    @Test
-    public void testPostParse() {
-
-        Workbook workbook = getWorkbook();
+        Workbook workbook = getWorkbook( version);
 
         BreakAdapter adapter = new BreakAdapter();
 
@@ -89,26 +70,20 @@ public class BreakAdapterTest extends ReportsWorkbookTest {
         }
 
         Sheet sheet = workbook.getSheetAt( 0);
-        try {
-            adapter.postParse( sheet, sheetParser, null);
-        } catch ( ParseException e) {
-            e.printStackTrace();
-            fail();
-        }
-        checkSheet( workbook.getSheetName( 0), sheet, true);
+        adapter.postParse( sheet, sheetParser, null);
+        checkSheet( workbook.getSheetName( 0), sheet, true, version);
     }
 
-    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel) {
+    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel, String version)
+            throws ReportsCheckException, IOException {
 
         // 期待値ブックの読み込み
-        Workbook expectedWorkbook = getExpectedWorkbook();
+        Workbook expectedWorkbook = getExpectedWorkbook( version);
         Sheet expectedSheet = expectedWorkbook.getSheet( expectedSheetName);
 
         try {
             // チェック
             ReportsTestUtil.checkSheet( expectedSheet, actualSheet, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
         } finally {
             String tmpDirPath = ReportsTestUtil.getTestOutputDir();
             try {

@@ -20,23 +20,26 @@
 
 package org.bbreak.excella.reports.tag;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.bbreak.excella.core.exception.ParseException;
+import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.model.ParsedReportInfo;
 import org.bbreak.excella.reports.processor.CellObject;
 import org.bbreak.excella.reports.processor.ReportCreateHelper;
 import org.bbreak.excella.reports.processor.ReportsParserInfo;
 import org.bbreak.excella.reports.processor.ReportsWorkbookTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * {@link org.bbreak.excella.reports.tag.BreakParamParser} のためのテスト・クラス。
@@ -46,34 +49,25 @@ import org.junit.Test;
 public class BreakParamParserTest extends ReportsWorkbookTest {
 
     /**
-     * コンストラクタ
+     * {@link org.bbreak.excella.reports.tag.BreakParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
+     * のためのテスト・メソッド。
      * 
-     * @param version Excelバージョン
+     * @throws ParseException
+     * @throws IOException
      */
-    public BreakParamParserTest( String version) {
-        super( version);
-    }
+    @ParameterizedTest
+    @CsvSource( WorkbookTest.VERSIONS)
+    public void testParseSheetCellObject( String version) throws ParseException, IOException {
 
-    /**
-     * {@link org.bbreak.excella.reports.tag.BreakParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)} のためのテスト・メソッド。
-     */
-    @Test
-    public void testParseSheetCellObject() {
-
-        Workbook workbook = getWorkbook();
+        Workbook workbook = getWorkbook( version);
         Sheet sheet1 = workbook.getSheetAt( 0);
 
         BreakParamParser parser = new BreakParamParser();
         ReportsParserInfo reportsParserInfo = new ReportsParserInfo();
         reportsParserInfo.setReportParsers( new ArrayList<ReportsTagParser<?>>( ReportCreateHelper.createDefaultParsers().values()));
 
-        List<ParsedReportInfo> results = null;
         // 解析処理
-        try {
-            results = parseSheet( parser, sheet1, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        List<ParsedReportInfo> results = parseSheet( parser, sheet1, reportsParserInfo);
 
         checkResult(
             new CellObject[] {new CellObject( 0, 0), new CellObject( 3, 2), new CellObject( 5, 3), new CellObject( 8, 1), new CellObject( 11, 4), new CellObject( 15, 2), new CellObject( 24, 3)},

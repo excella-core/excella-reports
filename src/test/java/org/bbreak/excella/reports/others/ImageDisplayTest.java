@@ -30,9 +30,7 @@ import org.bbreak.excella.reports.model.ReportBook;
 import org.bbreak.excella.reports.model.ReportSheet;
 import org.bbreak.excella.reports.processor.ReportProcessor;
 import org.bbreak.excella.reports.tag.ImageParamParser;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * 画像描画確認のためのテストクラス
@@ -55,20 +53,6 @@ public class ImageDisplayTest {
      * 複数テンプレートの場合の2枚目のテンプレートシートのコピー数
      */
     private static final Integer PLURAL_COPY_SECOND_NUM_OF_SHEETS = 4;
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
 
     /**
      * 目視確認用の画像付ファイルを出力します

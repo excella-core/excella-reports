@@ -20,8 +20,6 @@
 
 package org.bbreak.excella.reports.others;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
@@ -38,9 +36,7 @@ import org.bbreak.excella.reports.model.ReportSheet;
 import org.bbreak.excella.reports.processor.ReportProcessor;
 import org.bbreak.excella.reports.processor.ReportsCheckException;
 import org.bbreak.excella.reports.util.ReportsUtil;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * テンプレートをシートコピーした時の印刷設定確認のためのテストクラス
@@ -63,20 +59,6 @@ public class PrintSettingCopyTest {
      * 複数テンプレートの場合の2枚目のテンプレートシートのコピー数
      */
     private static final Integer PLURAL_COPY_SECOND_NUM_OF_SHEETS = 4;
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
 
     /**
      * 印刷設定付のコピーをテストし、ファイルを出力します
@@ -205,7 +187,7 @@ public class PrintSettingCopyTest {
         return templateFilePath;
     }
 
-    private static void templateCopyTest( Workbook workbook, ReportBook reportBook) {
+    private static void templateCopyTest( Workbook workbook, ReportBook reportBook) throws ReportsCheckException {
         // 出力シート単位にコピーする
         for ( ReportSheet reportSheet : reportBook.getReportSheets()) {
             if ( reportSheet != null) {
@@ -215,11 +197,7 @@ public class PrintSettingCopyTest {
                     Sheet expectedSheet = workbook.getSheetAt( tempIdx);
                     Sheet actualSheet = workbook.cloneSheet( tempIdx);
                     ReportsUtil.copyPrintSetup( workbook, tempIdx, actualSheet);
-                    try {
-                        ReportsTestUtil.checkSheet( expectedSheet, actualSheet, true);
-                    } catch ( ReportsCheckException e) {
-                        fail( e.getCheckMessagesToString());
-                    }
+                    ReportsTestUtil.checkSheet( expectedSheet, actualSheet, true);
                 }
             }
         }

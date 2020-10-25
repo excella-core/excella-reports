@@ -20,7 +20,12 @@
 
 package org.bbreak.excella.reports.processor;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
@@ -38,6 +43,7 @@ import org.bbreak.excella.core.SheetParser;
 import org.bbreak.excella.core.exception.ExportException;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.reports.ReportsTestUtil;
+import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.exporter.ReportBookExporter;
 import org.bbreak.excella.reports.listener.ReportProcessAdaptor;
 import org.bbreak.excella.reports.listener.ReportProcessListener;
@@ -46,7 +52,9 @@ import org.bbreak.excella.reports.model.ParsedReportInfo;
 import org.bbreak.excella.reports.model.ReportBook;
 import org.bbreak.excella.reports.model.ReportSheet;
 import org.bbreak.excella.reports.tag.ReportsTagParser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * {@link org.bbreak.excella.reports.processor.ReportProcessor} のためのテスト・クラス。
@@ -66,20 +74,19 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
      */
     private List<String> processStrings = new ArrayList<String>();
 
-    /**
-     * コンストラクタ
-     * 
-     * @param version バージョン
-     */
-    public ReportProcessorTest( String version) {
-        super( version);
-    }
 
     /**
-     * {@link org.bbreak.excella.reports.processor.ReportProcessor#ReportProcessor()} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.processor.ReportProcessor#ReportProcessor()}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchFieldException
      */
     @Test
-    public void testReportProcessor() {
+    public void testReportProcessor()
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         ReportProcessor processor = new ReportProcessor();
         // デフォルトタグパーサー
         Map<String, ReportsTagParser<?>> actualParsers = ( Map<String, ReportsTagParser<?>>) getPrivateFiled( processor, "parsers");
@@ -108,12 +115,16 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.processor.ReportProcessor#process(org.bbreak.excella.reports.model.ReportData)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.processor.ReportProcessor#process(org.bbreak.excella.reports.model.ReportData)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws Exception
      */
-    @Test
-    public void testProcess() {
+    @ParameterizedTest
+    @CsvSource( WorkbookTest.VERSIONS)
+    public void testProcess( String version) throws Exception {
 
-        getWorkbook();
+        getWorkbook( version);
 
         ReportProcessor reportProcessor = new ReportProcessor();
         reportProcessor.addReportProcessListener( new CustomListener());
@@ -148,12 +159,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
 
         book2.addReportSheet( null);
 
-        try {
-            reportProcessor.process( new ReportBook[] {book1, book2, null});
-        } catch ( Exception e) {
-            e.printStackTrace();
-            fail( e.toString());
-        }
+        reportProcessor.process( new ReportBook[] {book1, book2, null});
 
         List<String> exceptedProccess = new ArrayList<String>();
         exceptedProccess.add( "ブック解析前処理 CustomListener#preBookParse( Workbook workbook, ReportBook reportBook)");
@@ -206,12 +212,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
 
         book2.addReportSheet( null);
 
-        try {
-            reportProcessor.process( book1, book2, null);
-        } catch ( Exception e) {
-            e.printStackTrace();
-            fail( e.toString());
-        }
+        reportProcessor.process( book1, book2, null);
 
         exceptedProccess = new ArrayList<String>();
         exceptedProccess.add( "ブック解析前処理 CustomListener#preBookParse( Workbook workbook, ReportBook reportBook)");
@@ -243,23 +244,15 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
         // --------------------------------------------------------------------------
         processStrings.clear();
 
-        // ブック１
-        book1 = new ReportBook( "test", tmpDirPath + "workbookout1", configurations);
+        // ブック
+        ReportBook unknownTemplateBook = new ReportBook( "test", tmpDirPath + "workbookout1", configurations);
         // book1.setCopyTemplate( true);
 
         // →シート１
         sheetC1 = new ReportSheet( "Sheet1", "CSheet1");
-        book1.addReportSheet( sheetC1);
+        unknownTemplateBook.addReportSheet( sheetC1);
 
-        try {
-            reportProcessor.process( book1);
-            fail();
-        } catch ( FileNotFoundException e) {
-            assertTrue( true);
-        } catch ( Exception e) {
-            e.printStackTrace();
-            fail( e.toString());
-        }
+        assertThrows( FileNotFoundException.class, () -> reportProcessor.process( unknownTemplateBook));
         assertTrue( processStrings.isEmpty());
         
         // ---------------------------------------------------------------------------
@@ -301,12 +294,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
         book2.addReportSheet( sheetOriginal3);
         // →シート４（出力対象外）
 
-        try {
-            reportProcessor.process( book1, book2);
-        } catch ( Exception e) {
-            e.printStackTrace();
-            fail( e.toString());
-        }
+        reportProcessor.process( book1, book2);
 
         exceptedProccess = new ArrayList<String>();
         exceptedProccess.add( "ブック解析前処理 CustomListener#preBookParse( Workbook workbook, ReportBook reportBook)");
@@ -358,19 +346,14 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
         configurations = new ConvertConfiguration[] {configuration, configuration2};
 
         // ブック１
-        book1 = new ReportBook( getFilepath(), tmpDirPath + "workbookout1", configurations);
+        ReportBook errorBook= new ReportBook( getFilepath(), tmpDirPath + "workbookout1", configurations);
         // book1.setCopyTemplate( true);
 
         // →シート１
         sheetC1 = new ReportSheet( "Sheet1", "CSheet1");
-        book1.addReportSheet( sheetC1);
+        errorBook.addReportSheet( sheetC1);
 
-        try {
-            reportProcessor.process( book1);
-            fail();
-        } catch ( Exception e) {
-            assertTrue( true);
-        }
+        assertThrows( Exception.class, () -> reportProcessor.process( errorBook));
 
         exceptedProccess = new ArrayList<String>();
         exceptedProccess.add( "ブック解析前処理 CustomListener#preBookParse( Workbook workbook, ReportBook reportBook)");
@@ -391,10 +374,17 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.processor.ReportProcessor#addReportsTagParser(org.bbreak.excella.reports.tag.ReportsTagParser)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.processor.ReportProcessor#addReportsTagParser(org.bbreak.excella.reports.tag.ReportsTagParser)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchFieldException
      */
     @Test
-    public void testAddReportsTagParser() {
+    public void testAddReportsTagParser()
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         ReportProcessor processor = new ReportProcessor();
 
         ReportsTagParser<?> addparser = new CustomTagParser( "$CUSTOM");
@@ -405,10 +395,17 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.processor.ReportProcessor#removeReportsTagParser(java.lang.String)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.processor.ReportProcessor#removeReportsTagParser(java.lang.String)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchFieldException
      */
     @Test
-    public void testRemoveReportsTagParser() {
+    public void testRemoveReportsTagParser()
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 
         ReportProcessor processor = new ReportProcessor();
 
@@ -419,10 +416,17 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.processor.ReportProcessor#clearReportsTagParser()} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.processor.ReportProcessor#clearReportsTagParser()}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchFieldException
      */
     @Test
-    public void testClearReportsTagParser() {
+    public void testClearReportsTagParser()
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         ReportProcessor processor = new ReportProcessor();
         processor.clearReportsTagParser();
         Map<String, ReportsTagParser<?>> actualParsers = ( Map<String, ReportsTagParser<?>>) getPrivateFiled( processor, "parsers");
@@ -431,10 +435,17 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.processor.ReportProcessor#addReportBookExporter(org.bbreak.excella.reports.exporter.ReportBookExporter)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.processor.ReportProcessor#addReportBookExporter(org.bbreak.excella.reports.exporter.ReportBookExporter)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchFieldException
      */
     @Test
-    public void testAddReportBookExporter() {
+    public void testAddReportBookExporter()
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         ReportProcessor processor = new ReportProcessor();
 
         ReportBookExporter bookExporter = new CustomExporter();
@@ -446,10 +457,17 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.processor.ReportProcessor#removeReportBookExporter(java.lang.String)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.processor.ReportProcessor#removeReportBookExporter(java.lang.String)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchFieldException
      */
     @Test
-    public void testRemoveReportBookExporter() {
+    public void testRemoveReportBookExporter()
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         ReportProcessor processor = new ReportProcessor();
 
         processor.removeReportBookExporter( "EXCEL");
@@ -460,10 +478,17 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.processor.ReportProcessor#clearReportBookExporter()} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.processor.ReportProcessor#clearReportBookExporter()}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchFieldException
      */
     @Test
-    public void testClearReportBookExporter() {
+    public void testClearReportBookExporter()
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         ReportProcessor processor = new ReportProcessor();
 
         processor.clearReportBookExporter();
@@ -474,10 +499,17 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.processor.ReportProcessor#addReportProcessListener(org.bbreak.excella.reports.listener.ReportProcessListener)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.processor.ReportProcessor#addReportProcessListener(org.bbreak.excella.reports.listener.ReportProcessListener)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchFieldException
      */
     @Test
-    public void testAddReportProcessListener() {
+    public void testAddReportProcessListener()
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         ReportProcessor processor = new ReportProcessor();
         CustomListener listener = new CustomListener();
 
@@ -493,10 +525,17 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.processor.ReportProcessor#removeReportProcessListener(org.bbreak.excella.reports.listener.ReportProcessListener)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.processor.ReportProcessor#removeReportProcessListener(org.bbreak.excella.reports.listener.ReportProcessListener)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchFieldException
      */
     @Test
-    public void testRemoveReportProcessListener() {
+    public void testRemoveReportProcessListener()
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 
         ReportProcessor processor = new ReportProcessor();
         CustomListener listener = new CustomListener();
@@ -512,18 +551,12 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
 
     }
 
-    private Object getPrivateFiled( Object object, String fieldName) {
+    private Object getPrivateFiled( Object object, String fieldName) throws NoSuchFieldException, SecurityException,
+            IllegalArgumentException, IllegalAccessException {
 
-        Field field = null;
-        Object res = null;
-        try {
-            field = object.getClass().getDeclaredField( fieldName);
-            field.setAccessible( true);
-            res = field.get( object);
-        } catch ( Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        Field field = object.getClass().getDeclaredField( fieldName);
+        field.setAccessible( true);
+        Object res = field.get( object);
         return res;
 
     }

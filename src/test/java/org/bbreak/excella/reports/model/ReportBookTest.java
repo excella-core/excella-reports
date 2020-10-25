@@ -20,14 +20,14 @@
 
 package org.bbreak.excella.reports.model;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link org.bbreak.excella.reports.model.ReportBook} のためのテスト・クラス。
@@ -38,20 +38,6 @@ public class ReportBookTest {
 
     private ReportBook reportBook = null;
     
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
-
     /**
      * {@link org.bbreak.excella.reports.model.ReportBook#ReportBook(String, String, ConvertConfiguration...)} のためのテスト・メソッド。
      */
