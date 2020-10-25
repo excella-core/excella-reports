@@ -45,9 +45,11 @@ public class XLSXExporterTest {
     /**
      * {@link org.bbreak.excella.reports.exporter.XLSXExporter#output(org.apache.poi.ss.usermodel.Workbook, org.bbreak.excella.core.BookData, org.bbreak.excella.reports.model.ConvertConfiguration)}
      * のためのテスト・メソッド。
+     * 
+     * @throws ExportException
      */
     @Test
-    public void testOutput() {
+    public void testOutput() throws ExportException {
         XLSXExporter exporter = new XLSXExporter();
 
         ConvertConfiguration configuration = new ConvertConfiguration( exporter.getFormatType());
@@ -66,9 +68,6 @@ public class XLSXExporterTest {
 
         } catch ( IllegalArgumentException e) {
             // OK
-        } catch ( ExportException e) {
-            e.printStackTrace();
-            fail( e.toString());
         }
 
         wb = new XSSFWorkbook();
@@ -82,20 +81,13 @@ public class XLSXExporterTest {
 
         } catch ( IllegalArgumentException e) {
             // OK
-        } catch ( ExportException e) {
-            e.printStackTrace();
-            fail( e.toString());
         }
 
         // Exceptionを発生させる
         wb = new XSSFWorkbook();
         filePath = tmpDirPath + (new Date()).getTime() + exporter.getExtention();
         exporter.setFilePath( filePath);
-        try {
-            exporter.output( wb, new BookData(), configuration);
-        } catch ( ExportException e) {
-            fail( e.toString());
-        }
+        exporter.output( wb, new BookData(), configuration);
         File file = new File( exporter.getFilePath());
         file.setReadOnly();
         try {

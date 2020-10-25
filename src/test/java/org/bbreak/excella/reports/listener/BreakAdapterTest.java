@@ -20,8 +20,6 @@
 
 package org.bbreak.excella.reports.listener;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,10 +70,14 @@ public class BreakAdapterTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.listener.BreakAdapter#postParse(org.apache.poi.ss.usermodel.Sheet, org.bbreak.excella.core.SheetParser, org.bbreak.excella.core.SheetData)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.listener.BreakAdapter#postParse(org.apache.poi.ss.usermodel.Sheet, org.bbreak.excella.core.SheetParser, org.bbreak.excella.core.SheetData)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws ParseException
+     * @throws ReportsCheckException
      */
     @Test
-    public void testPostParse() {
+    public void testPostParse() throws ParseException, ReportsCheckException {
 
         Workbook workbook = getWorkbook();
 
@@ -89,16 +91,12 @@ public class BreakAdapterTest extends ReportsWorkbookTest {
         }
 
         Sheet sheet = workbook.getSheetAt( 0);
-        try {
-            adapter.postParse( sheet, sheetParser, null);
-        } catch ( ParseException e) {
-            e.printStackTrace();
-            fail();
-        }
+        adapter.postParse( sheet, sheetParser, null);
         checkSheet( workbook.getSheetName( 0), sheet, true);
     }
 
-    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel) {
+    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel)
+            throws ReportsCheckException {
 
         // 期待値ブックの読み込み
         Workbook expectedWorkbook = getExpectedWorkbook();
@@ -107,8 +105,6 @@ public class BreakAdapterTest extends ReportsWorkbookTest {
         try {
             // チェック
             ReportsTestUtil.checkSheet( expectedSheet, actualSheet, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
         } finally {
             String tmpDirPath = ReportsTestUtil.getTestOutputDir();
             try {

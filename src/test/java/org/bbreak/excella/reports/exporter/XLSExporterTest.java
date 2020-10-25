@@ -47,9 +47,11 @@ public class XLSExporterTest {
     /**
      * {@link org.bbreak.excella.reports.exporter.XLSExporter#output(org.apache.poi.ss.usermodel.Workbook, org.bbreak.excella.core.BookData, org.bbreak.excella.reports.model.ConvertConfiguration)}
      * のためのテスト・メソッド。
+     * 
+     * @throws ExportException
      */
     @Test
-    public void testOutput() {
+    public void testOutput() throws ExportException {
         XLSExporter exporter = new XLSExporter();
 
         ConvertConfiguration configuration = new ConvertConfiguration( exporter.getFormatType());
@@ -60,17 +62,11 @@ public class XLSExporterTest {
 
         Workbook wb = new HSSFWorkbook();
         // XLS
-        try {
-            filePath = tmpDirPath + (new Date()).getTime() + exporter.getExtention();
-            exporter.setFilePath( filePath);
-            exporter.output( wb, new BookData(), configuration);
-            File file = new File( exporter.getFilePath());
-            assertTrue( file.exists());
-
-        } catch ( ExportException e) {
-            e.printStackTrace();
-            fail( e.toString());
-        }
+        filePath = tmpDirPath + (new Date()).getTime() + exporter.getExtention();
+        exporter.setFilePath( filePath);
+        exporter.output( wb, new BookData(), configuration);
+        File file = new File( exporter.getFilePath());
+        assertTrue( file.exists());
 
         wb = new XSSFWorkbook();
         // XLSX
@@ -82,20 +78,15 @@ public class XLSExporterTest {
             fail( "XLSXは解析不可");
         } catch ( IllegalArgumentException e) {
             // OK
-        } catch ( ExportException e) {
-            fail( e.toString());
         }
 
         // Exceptionを発生させる
         wb = new HSSFWorkbook();
         filePath = tmpDirPath + (new Date()).getTime() + exporter.getExtention();
         exporter.setFilePath( filePath);
-        try {
-            exporter.output( wb, new BookData(), configuration);
-        } catch ( ExportException e) {
-            fail( e.toString());
-        }
-        File file = new File( exporter.getFilePath());
+        exporter.output( wb, new BookData(), configuration);
+
+        file = new File( exporter.getFilePath());
         file.setReadOnly();
         try {
             exporter.output( wb, new BookData(), configuration);

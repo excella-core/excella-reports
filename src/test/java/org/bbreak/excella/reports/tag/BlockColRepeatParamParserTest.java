@@ -62,7 +62,7 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
 
     
     @Test
-    public void testParseSheetCellObject() throws ParseException {
+    public void testParseSheetCellObject() throws ParseException, ReportsCheckException {
         Workbook workbook = null;
         
         ReportBook reportBook = new ReportBook( "", "test", new ConvertConfiguration[] {});
@@ -408,7 +408,8 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
         try {
             results = parseSheet( parser, sheet11, reportsParserInfo);
             fail( "fromCellの値の個数チェックにかかっていない");
-        } catch (ParseException e) {
+        } catch (ParseException expected) {
+            // ok
         }
         checkSheet( "sheet11", sheet11, true);
         
@@ -418,7 +419,8 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
         try {
             results = parseSheet( parser, sheet12, reportsParserInfo);
             fail( "toCellの値の個数チェックにかかっていない");
-        } catch (ParseException e) {
+        } catch (ParseException expected) {
+            // ok
         }
         checkSheet( "sheet12", sheet12, true);
         
@@ -433,7 +435,8 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
         try {
             results = parseSheet( parser, sheet13, reportsParserInfo);
             fail( "fromCellのマイナス値チェックにかかっていない");
-        } catch (ParseException e) {
+        } catch (ParseException expected) {
+            // ok
         }
         checkSheet( "sheet13", sheet13, true);
         
@@ -443,7 +446,8 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
         try {
             results = parseSheet( parser, sheet14, reportsParserInfo);
             fail( "toCellのマイナス値チェックにかかっていない");
-        } catch (ParseException e) {
+        } catch (ParseException expected) {
+            // ok
         }
         checkSheet( "sheet14", sheet14, true);
         
@@ -458,7 +462,8 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
         try {
             results = parseSheet( parser, sheet15, reportsParserInfo);
             fail( "fromCell > toCellチェックにかかっていない");
-        } catch (ParseException e) {
+        } catch (ParseException expected) {
+            // ok
         }
         checkSheet( "sheet15", sheet15, true);
         
@@ -469,7 +474,8 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
         try {
             results = parseSheet( parser, sheet17, reportsParserInfo);
             fail( "fromCell > toCellチェックにかかっていない");
-        } catch (ParseException e) {
+        } catch (ParseException expected) {
+            // ok
         }
         checkSheet( "sheet17", sheet17, true);
         
@@ -484,7 +490,8 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
         try {
             results = parseSheet( parser, sheet16, reportsParserInfo);
             fail( "repeatNumの数値チェックにかかっていない");
-        } catch (ParseException e) {
+        } catch (ParseException expected) {
+            // ok
         }
         checkSheet( "sheet16", sheet16, true);
         
@@ -495,7 +502,8 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
         try {
             results = parseSheet( parser, sheet18, reportsParserInfo);
             fail( "repeatNumの数値チェックにかかっていない");
-        } catch (ParseException e) {
+        } catch (ParseException expected) {
+            // ok
         }
         checkSheet( "sheet18", sheet18, true);
         
@@ -708,7 +716,8 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
     
     
     
-    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel) {
+    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel)
+            throws ReportsCheckException {
 
         // 期待値ブックの読み込み
         Workbook expectedWorkbook = getExpectedWorkbook();
@@ -719,8 +728,6 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
         try {
             // チェック
             ReportsTestUtil.checkSheet( expectedSheet, actualSheet, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
         } finally {
             String tmpDirPath = ReportsTestUtil.getTestOutputDir();
             try {

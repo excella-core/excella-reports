@@ -448,41 +448,38 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.util.ReportsTagUtil#getCellIndex(java.lang.String, java.lang.String)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.util.ReportsTagUtil#getCellIndex(java.lang.String, java.lang.String)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws ParseException
      */
     @Test
-    public void testGetCellIndex() {
-        int[] pos = null;
+    public void testGetCellIndex() throws ParseException {
+        int[] pos = ReportsUtil.getCellIndex( "3:5", "");
+        assertEquals( 3, pos[0]);
+        assertEquals( 5, pos[1]);
+
         try {
-            pos = ReportsUtil.getCellIndex( "3:5", "");
-            assertEquals( 3, pos[0]);
-            assertEquals( 5, pos[1]);
-
-            try {
-                pos = ReportsUtil.getCellIndex( "A:C", "");
-                fail();
-            } catch ( ParseException e) {
-                assertTrue( true);
-            }
-
-            try {
-                pos = ReportsUtil.getCellIndex( "TEST", "");
-                fail();
-            } catch ( ParseException e) {
-                assertTrue( true);
-            }
-
-            try {
-                pos = ReportsUtil.getCellIndex( "100", "");
-                fail();
-            } catch ( ParseException e) {
-                assertTrue( true);
-            }
-
+            pos = ReportsUtil.getCellIndex( "A:C", "");
+            fail( "ParseExcepion excepted, but no exception was thrown.");
         } catch ( ParseException e) {
-            e.printStackTrace();
-            fail();
+            assertTrue( true);
         }
+
+        try {
+            pos = ReportsUtil.getCellIndex( "TEST", "");
+            fail( "ParseExcepion excepted, but no exception was thrown.");
+        } catch ( ParseException e) {
+            assertTrue( true);
+        }
+
+        try {
+            pos = ReportsUtil.getCellIndex( "100", "");
+            fail( "ParseExcepion excepted, but no exception was thrown.");
+        } catch ( ParseException e) {
+            assertTrue( true);
+        }
+
     }
 
     /**
@@ -499,12 +496,7 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
         for ( int r = 0; r <= 4; r++) {
             for ( int c = 0; c <= 3; c++) {
                 if ( cellValues[r][c] != null) {
-                    try {
-                        assertEquals( PoiUtil.getCellValue( sheet.getRow( r).getCell( c)), cellValues[r][c]);
-                    } catch ( NullPointerException e) {
-                        e.printStackTrace();
-                        fail();
-                    }
+                    assertEquals( PoiUtil.getCellValue( sheet.getRow( r).getCell( c)), cellValues[r][c]);
                 } else {
                     assertTrue( sheet.getRow( r) == null || sheet.getRow( r).getCell( c) == null || sheet.getRow( r).getCell( c).getCellType() == CellType.BLANK);
                 }
@@ -526,12 +518,7 @@ public class ReportsUtilTest extends ReportsWorkbookTest {
         for ( int r = 0; r <= 4; r++) {
             for ( int c = 0; c <= 3; c++) {
                 if ( cellStyles[r][c] != null) {
-                    try {
-                        assertTrue( sheet.getRow( r).getCell( c).getCellStyle().equals( cellStyles[r][c]));
-                    } catch ( NullPointerException e) {
-                        e.printStackTrace();
-                        fail();
-                    }
+                    assertTrue( sheet.getRow( r).getCell( c).getCellStyle().equals( cellStyles[r][c]));
                 } else {
                     assertTrue( sheet.getRow( r) == null || sheet.getRow( r).getCell( c) == null || sheet.getRow( r).getCell( c).getCellStyle() == null);
                 }

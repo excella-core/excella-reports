@@ -20,8 +20,6 @@
 
 package org.bbreak.excella.reports.others;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
@@ -205,7 +203,7 @@ public class PrintSettingCopyTest {
         return templateFilePath;
     }
 
-    private static void templateCopyTest( Workbook workbook, ReportBook reportBook) {
+    private static void templateCopyTest( Workbook workbook, ReportBook reportBook) throws ReportsCheckException {
         // 出力シート単位にコピーする
         for ( ReportSheet reportSheet : reportBook.getReportSheets()) {
             if ( reportSheet != null) {
@@ -215,11 +213,7 @@ public class PrintSettingCopyTest {
                     Sheet expectedSheet = workbook.getSheetAt( tempIdx);
                     Sheet actualSheet = workbook.cloneSheet( tempIdx);
                     ReportsUtil.copyPrintSetup( workbook, tempIdx, actualSheet);
-                    try {
-                        ReportsTestUtil.checkSheet( expectedSheet, actualSheet, true);
-                    } catch ( ReportsCheckException e) {
-                        fail( e.getCheckMessagesToString());
-                    }
+                    ReportsTestUtil.checkSheet( expectedSheet, actualSheet, true);
                 }
             }
         }

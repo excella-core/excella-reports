@@ -23,7 +23,6 @@ package org.bbreak.excella.reports.tag;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +54,13 @@ public class RemoveParamParserTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.tag.RemoveParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.tag.RemoveParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws ParseException
      */
     @Test
-    public void testParseSheetCellObject() {
+    public void testParseSheetCellObject() throws ParseException {
 
         Workbook workbook = getWorkbook();
         Sheet sheet1 = workbook.getSheetAt( 0);
@@ -67,13 +69,8 @@ public class RemoveParamParserTest extends ReportsWorkbookTest {
         ReportsParserInfo reportsParserInfo = new ReportsParserInfo();
         reportsParserInfo.setReportParsers( new ArrayList<ReportsTagParser<?>>( ReportCreateHelper.createDefaultParsers().values()));
 
-        List<ParsedReportInfo> results = null;
         // 解析処理
-        try {
-            results = parseSheet( parser, sheet1, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        List<ParsedReportInfo> results = parseSheet( parser, sheet1, reportsParserInfo);
 
         checkResult( new CellObject[] {new CellObject( 0, 0), new CellObject( 3, 2), new CellObject( 5, 3), new CellObject( 8, 1), new CellObject( 11, 4), new CellObject( 15, 2),
                 new CellObject( 24, 3)}, results);

@@ -23,7 +23,6 @@ package org.bbreak.excella.reports.tag;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -61,10 +60,14 @@ public class SumParamParserTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.tag.SumParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.tag.SumParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws ParseException
+     * @throws ReportsCheckException
      */
     @Test
-    public void testParseSheetCellObject() {
+    public void testParseSheetCellObject() throws ParseException, ReportsCheckException {
 
         // -----------------------
         // □[正常系]通常解析
@@ -107,12 +110,7 @@ public class SumParamParserTest extends ReportsWorkbookTest {
         reportsParserInfo.setParamInfo( reportSheet.getParamInfo());
 
         // 解析処理
-        List<ParsedReportInfo> results = null;
-        try {
-            results = parseSheet( parser, sheet1, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        List<ParsedReportInfo> results = parseSheet( parser, sheet1, reportsParserInfo);
 
         // 処理結果のチェック
         checkResult( new CellObject[] {new CellObject( 4, 1), new CellObject( 7, 1)}, results);
@@ -148,7 +146,8 @@ public class SumParamParserTest extends ReportsWorkbookTest {
         assertEquals( "テスト", paser.getTag());
     }
 
-    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel) {
+    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel)
+            throws ReportsCheckException {
 
         // 期待値ブックの読み込み
         Workbook expectedWorkbook = getExpectedWorkbook();
@@ -157,8 +156,6 @@ public class SumParamParserTest extends ReportsWorkbookTest {
         try {
             // チェック
             ReportsTestUtil.checkSheet( expectedSheet, actualSheet, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
         } finally {
             if ( outputExcel) {
                 String tmpDirPath = ReportsTestUtil.getTestOutputDir();

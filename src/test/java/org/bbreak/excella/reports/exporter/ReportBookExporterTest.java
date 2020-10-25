@@ -22,7 +22,6 @@ package org.bbreak.excella.reports.exporter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.bbreak.excella.core.BookData;
@@ -44,10 +43,13 @@ public class ReportBookExporterTest extends WorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.exporter.ReportBookExporter#export(org.apache.poi.ss.usermodel.Workbook, org.bbreak.excella.core.BookData)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.exporter.ReportBookExporter#export(org.apache.poi.ss.usermodel.Workbook, org.bbreak.excella.core.BookData)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws ExportException
      */
     @Test
-    public void testExport() {
+    public void testExport() throws ExportException {
 
         Workbook book = getWorkbook();
 
@@ -70,12 +72,7 @@ public class ReportBookExporterTest extends WorkbookTest {
         };
 
         exporter.setConfiguration( new ConvertConfiguration( ""));
-        try {
-            exporter.export( book, null);
-        } catch ( ExportException e) {
-            e.printStackTrace();
-            fail( e.toString());
-        }
+        exporter.export( book, null);
 
         assertEquals( 4, book.getNumberOfSheets());
 

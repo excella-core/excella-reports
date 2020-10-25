@@ -60,10 +60,14 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.tag.RowRepeatParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.tag.RowRepeatParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws ParseException
+     * @throws ReportsCheckException
      */
     @Test
-    public void testParseSheetCellObject() {
+    public void testParseSheetCellObject() throws ParseException, ReportsCheckException {
 
         Workbook workbook = getWorkbook();
         Sheet sheet1 = workbook.getSheetAt( 0);
@@ -98,12 +102,7 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         reportsParserInfo.setParamInfo( reportSheets[0].getParamInfo());
 
         // 解析処理.
-        List<ParsedReportInfo> results = null;
-        try {
-            results = parseSheet( parser, sheet1, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        List<ParsedReportInfo> results = parseSheet( parser, sheet1, reportsParserInfo);
 
         CellObject[] expectBeCells = new CellObject[] {new CellObject( 0, 0), new CellObject( 2, 1)};
         CellObject[] expectAfCells = new CellObject[] {new CellObject( 4, 0), new CellObject( 4, 1)};
@@ -130,12 +129,7 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         workbook = getWorkbook();
         Sheet sheet2 = workbook.getSheetAt( 1);
         // 解析処理
-        results = null;
-        try {
-            results = parseSheet( parser, sheet2, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        results = parseSheet( parser, sheet2, reportsParserInfo);
 
         expectBeCells = new CellObject[] {new CellObject( 0, 0), new CellObject( 2, 1), new CellObject( 4, 2)};
         expectAfCells = new CellObject[] {new CellObject( 4, 0), new CellObject( 4, 1), new CellObject( 5, 2)};
@@ -157,12 +151,7 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         workbook = getWorkbook();
         Sheet sheet3 = workbook.getSheetAt( 2);
         // 解析処理
-        results = null;
-        try {
-            results = parseSheet( parser, sheet3, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        results = parseSheet( parser, sheet3, reportsParserInfo);
 
         expectBeCells = new CellObject[] {new CellObject( 0, 0), new CellObject( 0, 1), new CellObject( 0, 2), new CellObject( 17, 1), new CellObject( 18, 0)};
         expectAfCells = new CellObject[] {new CellObject( 2, 0), new CellObject( 1, 1), new CellObject( 4, 2), new CellObject( 19, 1), new CellObject( 20, 0)};
@@ -185,11 +174,7 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         Sheet sheet4 = workbook.getSheetAt( 3);
         // 解析処理
         results = null;
-        try {
-            results = parseSheet( parser, sheet4, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        results = parseSheet( parser, sheet4, reportsParserInfo);
 
         expectBeCells = new CellObject[] {new CellObject( 0, 0), new CellObject( 1, 0), new CellObject( 2, 0)};
         expectAfCells = new CellObject[] {new CellObject( 0, 0), new CellObject( 1, 0), new CellObject( 2, 0)};
@@ -209,7 +194,8 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         try {
             parseSheet( parser, sheet5, reportsParserInfo);
             fail( "シートハイパーリンク設定有無と重複非表示は重複不可チェックにかかっていない");
-        } catch ( ParseException e) {
+        } catch ( ParseException expected) {
+            // ok
         }
 
         // -----------------------
@@ -221,7 +207,7 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         // 解析処理
         try {
             parseSheet( parser, sheet6, reportsParserInfo);
-            fail();
+            fail( "ParseException expected, but no exception was thrown.");
         } catch ( ParseException e) {
             assertTrue( e instanceof ParseException);
         }
@@ -252,13 +238,7 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         workbook = getWorkbook();
         Sheet sheet8 = workbook.getSheetAt( 7);
         // 解析処理
-        results = null;
-        try {
-            results = parseSheet( parser, sheet8, reportsParserInfo);
-        } catch ( ParseException e) {
-            e.printStackTrace();
-            fail( e.toString());
-        }
+        results = parseSheet( parser, sheet8, reportsParserInfo);
         
         expectBeCells = new CellObject[] {new CellObject(2,0), new CellObject(2,1), new CellObject(2,2), new CellObject(2,3), new CellObject(2,4), new CellObject(14,0)};
         expectAfCells = new CellObject[] {new CellObject(10,0), new CellObject(10,1), new CellObject(10,2), new CellObject(4,3), new CellObject(6,4), new CellObject(22,0)};
@@ -280,13 +260,7 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         workbook = getWorkbook();
         Sheet sheet9 = workbook.getSheetAt( 8);
         // 解析処理
-        results = null;
-        try {
-            results = parseSheet( parser, sheet9, reportsParserInfo);
-        } catch ( ParseException e) {
-            e.printStackTrace();
-            fail( e.toString());
-        }
+        results = parseSheet( parser, sheet9, reportsParserInfo);
         
         expectBeCells = new CellObject[] {new CellObject(3,0),new CellObject(3,1),new CellObject(3,2),new CellObject(3,3),new CellObject(3,4)};
         expectAfCells = new CellObject[] {new CellObject(15,0),new CellObject(15,1),new CellObject(15,2),new CellObject(6,3),new CellObject(9,4)};
@@ -329,13 +303,7 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         // ------------------------------------------------------------
         workbook = getWorkbook();
         Sheet sheet17 = workbook.getSheetAt( 16);
-        results = null;
-        try {
-            results = parseSheet( parser, sheet17, reportsParserInfo);
-        } catch ( ParseException e) {
-            e.printStackTrace();
-            fail( e.toString());
-        }
+        results = parseSheet( parser, sheet17, reportsParserInfo);
         checkSheet( "Sheet17", sheet17, true);
         
         // ------------------------------------------------------------
@@ -345,13 +313,7 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         workbook = getWorkbook();
         Sheet sheet18 = workbook.getSheetAt( 17);
         // 解析処理
-        results = null;
-        try {
-            results = parseSheet( parser, sheet18, reportsParserInfo);
-        } catch ( ParseException e) {
-            e.printStackTrace();
-            fail( e.toString());
-        }
+        results = parseSheet( parser, sheet18, reportsParserInfo);
         
         // 順にデータ数=最低繰返回数、データ数=最低繰返数-1,データ数=最低繰返数-1(結合セルが下にある),データ数=最低繰返数-1(結合セルを繰り返し)
         expectBeCells = new CellObject[] {new CellObject(1,1),new CellObject(2,2),new CellObject(2,4), new CellObject(4,3)};
@@ -392,7 +354,8 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         assertEquals( "てすと", parser.getTag());
     }
 
-    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel) {
+    private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel)
+            throws ReportsCheckException {
 
         // 期待値ブックの読み込み
         Workbook expectedWorkbook = getExpectedWorkbook();
@@ -401,8 +364,6 @@ public class RowRepeatParamParserTest extends ReportsWorkbookTest {
         try {
             // チェック
             ReportsTestUtil.checkSheet( expectedSheet, actualSheet, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
         } finally {
             String tmpDirPath = ReportsTestUtil.getTestOutputDir();
             try {

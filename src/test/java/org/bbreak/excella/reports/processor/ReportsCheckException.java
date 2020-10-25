@@ -78,4 +78,9 @@ public class ReportsCheckException extends Exception {
         }
         return buffer.toString();
     }
+
+    @Override
+    public String getMessage() {
+        return super.getMessage() + System.lineSeparator() + getCheckMessagesToString();
+    }
 }

@@ -23,7 +23,6 @@ package org.bbreak.excella.reports.processor;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -144,10 +143,13 @@ public class ReportsParserInfoTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.processor.ReportsParserInfo#getMatchTagParser(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.processor.ReportsParserInfo#getMatchTagParser(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws ParseException
      */
     @Test
-    public void testGetMatchTagParser() {
+    public void testGetMatchTagParser() throws ParseException {
         
         ReportsParserInfo info = new ReportsParserInfo();
         ReportBook reportBook = new ReportBook("", "", new ConvertConfiguration[]{});
@@ -169,39 +171,18 @@ public class ReportsParserInfoTest {
         xssfCell1.setCellValue( "$TEST{XSSF}");
         
 
-        TagParser<?> parser = null;
-        try {
-            parser = info.getMatchTagParser( hssfSheet, hssfCell0);
-        } catch ( ParseException e) {
-            e.printStackTrace();
-            fail(e.toString());
-        }
+        TagParser<?> parser = info.getMatchTagParser( hssfSheet, hssfCell0);
         assertEquals( SingleParamParser.class, parser.getClass());
 
 
-        try {
-            parser = info.getMatchTagParser( hssfSheet, hssfCell1);
-        } catch ( ParseException e) {
-            e.printStackTrace();
-            fail(e.toString());
-        }
+        parser = info.getMatchTagParser( hssfSheet, hssfCell1);
         assertNull( parser);
         
         
-        try {
-            parser = info.getMatchTagParser( xssfSheet, xssfCell0);
-        } catch ( ParseException e) {
-            e.printStackTrace();
-            fail(e.toString());
-        }
+        parser = info.getMatchTagParser( xssfSheet, xssfCell0);
         assertEquals( SingleParamParser.class, parser.getClass());
         
-        try {
-            parser = info.getMatchTagParser( xssfSheet, xssfCell1);
-        } catch ( ParseException e) {
-            e.printStackTrace();
-            fail(e.toString());
-        }
+        parser = info.getMatchTagParser( xssfSheet, xssfCell1);
         assertNull( parser);
 
         try {

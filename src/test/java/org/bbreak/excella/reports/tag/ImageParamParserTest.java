@@ -88,10 +88,15 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.tag.ImageParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.tag.ImageParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws ParseException
+     * @throws ReportsCheckException
+     * @throws IOException
      */
     @Test
-    public void testParseSheetCellObject() {
+    public void testParseSheetCellObject() throws ParseException, ReportsCheckException, IOException {
         // -----------------------
         // □[正常系]通常解析
         // -----------------------
@@ -104,11 +109,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         ReportsParserInfo reportsParserInfo = new ReportsParserInfo();
         reportsParserInfo.setParamInfo( createTestData( ImageParamParser.DEFAULT_TAG));
 
-        try {
-            parseSheet( parser, sheet1, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        parseSheet( parser, sheet1, reportsParserInfo);
 
         // 不要シートの削除
         Set<Integer> delSheetIndexs = new TreeSet<Integer>( Collections.reverseOrder());
@@ -128,9 +129,6 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         try {
             // チェック
             ReportsTestUtil.checkSheet( expectedSheet, sheet1, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
-
         } finally {
             // オブジェクトはチェックできないので、出力して確認
             String tmpDirPath = System.getProperty( "user.dir") + "/work/test/"; // System.getProperty( "java.io.tmpdir");
@@ -139,19 +137,14 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
                 file.mkdirs();
             }
 
-            try {
-                String filepath = null;
-                if ( version.equals( "2007")) {
-                    filepath = tmpDirPath + "ImageParamParserTest1.xlsx";
-                } else {
-                    filepath = tmpDirPath + "ImageParamParserTest1.xls";
-                }
-                PoiUtil.writeBook( workbook, filepath);
-                log.info( "出力ファイルを確認してください：" + filepath);
-
-            } catch ( IOException e) {
-                fail( e.toString());
+            String filepath;
+            if ( version.equals( "2007")) {
+                filepath = tmpDirPath + "ImageParamParserTest1.xlsx";
+            } else {
+                filepath = tmpDirPath + "ImageParamParserTest1.xls";
             }
+            PoiUtil.writeBook( workbook, filepath);
+            log.info( "出力ファイルを確認してください：" + filepath);
         }
 
         // -----------------------
@@ -166,11 +159,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         reportsParserInfo = new ReportsParserInfo();
         reportsParserInfo.setParamInfo( createTestData( "$Image"));
 
-        try {
-            parseSheet( parser, sheet2, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        parseSheet( parser, sheet2, reportsParserInfo);
 
         // 不要シートの削除
         delSheetIndexs.clear();
@@ -190,8 +179,6 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         try {
             // チェック
             ReportsTestUtil.checkSheet( expectedSheet, sheet2, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
         } finally {
             // オブジェクトはチェックできないので、出力して確認
             String tmpDirPath = System.getProperty( "user.dir") + "/work/test/"; // System.getProperty( "java.io.tmpdir");;
@@ -199,19 +186,14 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
             if ( !file.exists()) {
                 file.mkdir();
             }
-            try {
-                String filepath = null;
-                if ( version.equals( "2007")) {
-                    filepath = tmpDirPath + "ImageParamParserTest2.xlsx";
-                } else {
-                    filepath = tmpDirPath + "ImageParamParserTest2.xls";
-                }
-                PoiUtil.writeBook( workbook, filepath);
-                log.info( "出力ファイルを確認してください：" + filepath);
-
-            } catch ( IOException e) {
-                fail( e.toString());
+            String filepath;
+            if ( version.equals( "2007")) {
+                filepath = tmpDirPath + "ImageParamParserTest2.xlsx";
+            } else {
+                filepath = tmpDirPath + "ImageParamParserTest2.xls";
             }
+            PoiUtil.writeBook( workbook, filepath);
+            log.info( "出力ファイルを確認してください：" + filepath);
         }
 
         String filename = this.getClass().getSimpleName();
@@ -222,13 +204,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         }
 
         URL url = this.getClass().getResource( filename);
-        String path = null;
-        try {
-            path = URLDecoder.decode( url.getFile(), "UTF-8");
-
-        } catch ( UnsupportedEncodingException e) {
-            Assert.fail();
-        }
+        String path = URLDecoder.decode( url.getFile(), "UTF-8");
 
         // -----------------------
         // ■[異常系]チェック
@@ -245,7 +221,8 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         try {
             parseSheet( parser, sheet3, reportsParserInfo);
             fail( "チェックにかかっていない");
-        } catch ( ParseException e) {
+        } catch ( ParseException expected) {
+            // ok
         }
 
         // -----------------------
@@ -260,22 +237,14 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         reportsParserInfo = new ReportsParserInfo();
         reportsParserInfo.setParamInfo( createTestData( ImageParamParser.DEFAULT_TAG));
 
-        try {
-            parseSheet( parser, sheet4, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        parseSheet( parser, sheet4, reportsParserInfo);
 
         // 期待値ブックの読み込み
         expectedWorkbook = getExpectedWorkbook();
         expectedSheet = expectedWorkbook.getSheet( "Sheet4");
 
-        try {
-            // チェック
-            ReportsTestUtil.checkSheet( expectedSheet, sheet4, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
-        }
+        // チェック
+        ReportsTestUtil.checkSheet( expectedSheet, sheet4, false);
 
         // ----------------------------------------------------------------------
         // □[正常系]1シート出力 / タグで複数画像 / 単一テンプレートを上書き
@@ -289,11 +258,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         reportsParserInfo = new ReportsParserInfo();
         reportsParserInfo.setParamInfo( createPluralTestData( ImageParamParser.DEFAULT_TAG));
 
-        try {
-            parseSheet( parser, sheet5, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        parseSheet( parser, sheet5, reportsParserInfo);
 
         // 不要シートの削除
         delSheetIndexs.clear();
@@ -313,8 +278,6 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         try {
             // チェック
             ReportsTestUtil.checkSheet( expectedSheet, sheet5, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
         } finally {
             // オブジェクトはチェックできないので、出力して確認
             String tmpDirPath = System.getProperty( "user.dir") + "/work/test/"; // System.getProperty( "java.io.tmpdir");
@@ -323,19 +286,14 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
                 file.mkdirs();
             }
 
-            try {
-                String filepath = null;
-                if ( version.equals( "2007")) {
-                    filepath = tmpDirPath + "ImageParamParserTest3.xlsx";
-                } else {
-                    filepath = tmpDirPath + "ImageParamParserTest3.xls";
-                }
-                PoiUtil.writeBook( workbook, filepath);
-                log.info( "出力ファイルを確認してください：" + filepath);
-
-            } catch ( IOException e) {
-                fail( e.toString());
+            String filepath;
+            if ( version.equals( "2007")) {
+                filepath = tmpDirPath + "ImageParamParserTest3.xlsx";
+            } else {
+                filepath = tmpDirPath + "ImageParamParserTest3.xls";
             }
+            PoiUtil.writeBook( workbook, filepath);
+            log.info( "出力ファイルを確認してください：" + filepath);
         }
 
         // ----------------------------------------------------------------------
@@ -351,11 +309,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         reportsParserInfo = new ReportsParserInfo();
         reportsParserInfo.setParamInfo( createPluralTestData( ImageParamParser.DEFAULT_TAG));
 
-        try {
-            parseSheet( parser, sheet6, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        parseSheet( parser, sheet6, reportsParserInfo);
 
         // 不要シートの削除
         delSheetIndexs.clear();
@@ -375,8 +329,6 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
         try {
             // チェック
             ReportsTestUtil.checkSheet( expectedSheet, sheet6, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
         } finally {
             // オブジェクトはチェックできないので、出力して確認
             String tmpDirPath = System.getProperty( "user.dir") + "/work/test/"; // System.getProperty( "java.io.tmpdir");
@@ -385,19 +337,14 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
                 file.mkdirs();
             }
 
-            try {
-                String filepath = null;
-                if ( version.equals( "2007")) {
-                    filepath = tmpDirPath + "ImageParamParserTest4.xlsx";
-                } else {
-                    filepath = tmpDirPath + "ImageParamParserTest4.xls";
-                }
-                PoiUtil.writeBook( workbook, filepath);
-                log.info( "出力ファイルを確認してください：" + filepath);
-
-            } catch ( IOException e) {
-                fail( e.toString());
+            String filepath;
+            if ( version.equals( "2007")) {
+                filepath = tmpDirPath + "ImageParamParserTest4.xlsx";
+            } else {
+                filepath = tmpDirPath + "ImageParamParserTest4.xls";
             }
+            PoiUtil.writeBook( workbook, filepath);
+            log.info( "出力ファイルを確認してください：" + filepath);
         }
 
         // ----------------------------------------------------------------------
@@ -415,11 +362,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
             reportsParserInfo = new ReportsParserInfo();
             reportsParserInfo.setParamInfo( createPluralTestData( ImageParamParser.DEFAULT_TAG));
 
-            try {
-                parseSheet( parser, sheet, reportsParserInfo);
-            } catch ( ParseException e) {
-                fail( e.toString());
-            }
+            parseSheet( parser, sheet, reportsParserInfo);
         }
 
         // 不要シートの削除
@@ -446,8 +389,6 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
                 // チェック
                 ReportsTestUtil.checkSheet( expectedWorkbook.getSheetAt( startOfTargetSheet + i), workbook.getSheetAt( i), false);
             }
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
         } finally {
             // オブジェクトはチェックできないので、出力して確認
             String tmpDirPath = System.getProperty( "user.dir") + "/work/test/"; // System.getProperty( "java.io.tmpdir");
@@ -456,19 +397,14 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
                 file.mkdirs();
             }
 
-            try {
-                String filepath = null;
-                if ( version.equals( "2007")) {
-                    filepath = tmpDirPath + "ImageParamParserTest5.xlsx";
-                } else {
-                    filepath = tmpDirPath + "ImageParamParserTest5.xls";
-                }
-                PoiUtil.writeBook( workbook, filepath);
-                log.info( "出力ファイルを確認してください：" + filepath);
-
-            } catch ( IOException e) {
-                fail( e.toString());
+            String filepath;
+            if ( version.equals( "2007")) {
+                filepath = tmpDirPath + "ImageParamParserTest5.xlsx";
+            } else {
+                filepath = tmpDirPath + "ImageParamParserTest5.xls";
             }
+            PoiUtil.writeBook( workbook, filepath);
+            log.info( "出力ファイルを確認してください：" + filepath);
 
         }
 
@@ -493,11 +429,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
             reportsParserInfo = new ReportsParserInfo();
             reportsParserInfo.setParamInfo( createPluralTestData( ImageParamParser.DEFAULT_TAG));
 
-            try {
-                parseSheet( parser, sheet, reportsParserInfo);
-            } catch ( ParseException e) {
-                fail( e.toString());
-            }
+            parseSheet( parser, sheet, reportsParserInfo);
         }
 
         // 不要シートの削除
@@ -528,8 +460,6 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
                 // チェック
                 ReportsTestUtil.checkSheet( expectedWorkbook.getSheetAt( startOfTargetSheet + i), workbook.getSheetAt( i), false);
             }
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
         } finally {
             // オブジェクトはチェックできないので、出力して確認
             String tmpDirPath = System.getProperty( "user.dir") + "/work/test/"; // System.getProperty( "java.io.tmpdir");
@@ -538,24 +468,19 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
                 file.mkdirs();
             }
 
-            try {
-                String filepath = null;
-                if ( version.equals( "2007")) {
-                    filepath = tmpDirPath + "ImageParamParserTest6.xlsx";
-                } else {
-                    filepath = tmpDirPath + "ImageParamParserTest6.xls";
-                }
-                PoiUtil.writeBook( workbook, filepath);
-                log.info( "出力ファイルを確認してください：" + filepath);
-
-            } catch ( IOException e) {
-                fail( e.toString());
+            String filepath;
+            if ( version.equals( "2007")) {
+                filepath = tmpDirPath + "ImageParamParserTest6.xlsx";
+            } else {
+                filepath = tmpDirPath + "ImageParamParserTest6.xls";
             }
+            PoiUtil.writeBook( workbook, filepath);
+            log.info( "出力ファイルを確認してください：" + filepath);
         }
 
     }
 
-    private ParamInfo createTestData( String tag) {
+    private ParamInfo createTestData( String tag) throws UnsupportedEncodingException {
 
         ParamInfo info = new ParamInfo();
         info.addParam( tag, "png", getImagePath( "bbreak.PNG"));
@@ -565,7 +490,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
 
     }
 
-    private ParamInfo createPluralTestData( String tag) {
+    private ParamInfo createPluralTestData( String tag) throws UnsupportedEncodingException {
 
         ParamInfo info = new ParamInfo();
         info.addParam( tag, "png", getImagePath( "bbreak.PNG"));
@@ -578,16 +503,11 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
 
     }
 
-    private String getImagePath( String fileName) {
+    private String getImagePath( String fileName) throws UnsupportedEncodingException {
         String path = null;
 
-        try {
-            URL url = this.getClass().getResource( fileName);
-            path = URLDecoder.decode( url.getFile(), "UTF-8");
-
-        } catch ( Exception e) {
-            fail( e.toString());
-        }
+        URL url = this.getClass().getResource( fileName);
+        path = URLDecoder.decode( url.getFile(), "UTF-8");
 
         return path;
 

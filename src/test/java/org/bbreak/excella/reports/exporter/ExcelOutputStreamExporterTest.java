@@ -25,7 +25,6 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -55,7 +54,7 @@ public class ExcelOutputStreamExporterTest {
      * @throws Exception
      */
     @Test
-    public void testOutput() {
+    public void testOutput() throws Exception {
 
         FileOutputStream xlsFileOutputStream = null;
         // 出力先
@@ -86,17 +85,9 @@ public class ExcelOutputStreamExporterTest {
             long xlsFileByteLength = xlsExcelFile.length();
             long xlsStreamFileSize = xlsStreamFile.length();
             assertEquals( xlsFileByteLength, xlsStreamFileSize);
-        } catch ( Exception e) {
-            e.getStackTrace();
-            fail( e.toString());
         } finally {
-            try {
-                if ( xlsFileOutputStream != null) {
-                    xlsFileOutputStream.close();
-                }
-            } catch ( IOException e) {
-                e.printStackTrace();
-                fail( e.toString());
+            if ( xlsFileOutputStream != null) {
+                xlsFileOutputStream.close();
             }
         }
         // XLSテスト� - フォーマット単数指定・ストリーム出力によるファイル以外が削除されていることを確認
@@ -128,17 +119,9 @@ public class ExcelOutputStreamExporterTest {
             if ( xlsExcelFile.exists()) {
                 fail( "ExcelFile exists.");
             }
-        } catch ( Exception e) {
-            e.getStackTrace();
-            fail( e.toString());
         } finally {
-            try {
-                if ( xlsFileOutputStream != null) {
-                    xlsFileOutputStream.close();
-                }
-            } catch ( IOException e) {
-                e.printStackTrace();
-                fail( e.toString());
+            if ( xlsFileOutputStream != null) {
+                xlsFileOutputStream.close();
             }
         }
 
@@ -171,17 +154,9 @@ public class ExcelOutputStreamExporterTest {
                 fail( "File is not opened");
             }
 
-        } catch ( Exception e) {
-            e.getStackTrace();
-            fail( e.toString());
         } finally {
-            try {
-                if ( xlsFileOutputStream != null) {
-                    xlsxFileOutputStream.close();
-                }
-            } catch ( IOException e) {
-                e.printStackTrace();
-                fail( e.toString());
+            if ( xlsFileOutputStream != null) {
+                xlsxFileOutputStream.close();
             }
         }
     }

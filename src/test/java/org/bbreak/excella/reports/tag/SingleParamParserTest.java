@@ -21,7 +21,6 @@
 package org.bbreak.excella.reports.tag;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -54,10 +53,14 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.tag.SingleParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)} のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.tag.SingleParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
+     * のためのテスト・メソッド。
+     * 
+     * @throws ParseException
+     * @throws ReportsCheckException
      */
     @Test
-    public void testParseSheetCellObject() {
+    public void testParseSheetCellObject() throws ParseException, ReportsCheckException {
 
         // -----------------------
         // □[正常系]通常解析
@@ -114,22 +117,14 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
         reportsParserInfo.setParamInfo( info);
 
         // 解析処理
-        try {
-            parseSheet( parser, sheet1, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        parseSheet( parser, sheet1, reportsParserInfo);
 
         // 期待値ブックの読み込み
         Workbook expectedWorkbook = getExpectedWorkbook();
         Sheet expectedSheet = expectedWorkbook.getSheet( "Sheet1");
 
-        try {
-            // チェック
-            ReportsTestUtil.checkSheet( expectedSheet, sheet1, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
-        }
+        // チェック
+        ReportsTestUtil.checkSheet( expectedSheet, sheet1, false);
 
         // -----------------------
         // □[正常系]タグ名の変更
@@ -168,22 +163,14 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
         Sheet sheet2 = workbook.getSheetAt( 1);
 
         // 解析処理
-        try {
-            parseSheet( parser, sheet2, reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
+        parseSheet( parser, sheet2, reportsParserInfo);
 
         // 期待値ブックの読み込み
         expectedWorkbook = getExpectedWorkbook();
         expectedSheet = expectedWorkbook.getSheet( "Sheet2");
 
-        try {
-            // チェック
-            ReportsTestUtil.checkSheet( expectedSheet, sheet2, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
-        }
+        // チェック
+        ReportsTestUtil.checkSheet( expectedSheet, sheet2, false);
 
         // セッターによるタグ名セット
         parser = new SingleParamParser();
@@ -192,23 +179,15 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
         sheet2 = workbook.getSheetAt( 1);
 
         // 解析処理
-        try {
-            parseSheet( parser, sheet2/** sheet1 */
+        parseSheet( parser, sheet2/** sheet1 */
             , reportsParserInfo);
-        } catch ( ParseException e) {
-            fail( e.toString());
-        }
 
         // 期待値ブックの読み込み
         expectedWorkbook = getExpectedWorkbook();
         expectedSheet = expectedWorkbook.getSheet( "Sheet2");
 
-        try {
-            // チェック
-            ReportsTestUtil.checkSheet( expectedSheet, sheet2, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
-        }
+        // チェック
+        ReportsTestUtil.checkSheet( expectedSheet, sheet2, false);
 
         // -----------------------
         // □[正常系]必須パラメータがない場合
@@ -218,21 +197,14 @@ public class SingleParamParserTest extends ReportsWorkbookTest {
         Sheet sheet3 = workbook.getSheetAt( 2);
 
         // 解析処理
-        try {
-            parseSheet( parser, sheet3, reportsParserInfo);
-        } catch ( ParseException e) {
+        parseSheet( parser, sheet3, reportsParserInfo);
 
-        }
         // 期待値ブックの読み込み
         expectedWorkbook = getExpectedWorkbook();
         expectedSheet = expectedWorkbook.getSheet( "Sheet3");
 
-        try {
-            // チェック
-            ReportsTestUtil.checkSheet( expectedSheet, sheet3, false);
-        } catch ( ReportsCheckException e) {
-            fail( e.getCheckMessagesToString());
-        }
+        // チェック
+        ReportsTestUtil.checkSheet( expectedSheet, sheet3, false);
     }
 
     /**
