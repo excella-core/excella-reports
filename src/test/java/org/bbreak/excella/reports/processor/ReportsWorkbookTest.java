@@ -42,7 +42,7 @@ import org.bbreak.excella.reports.model.ParsedReportInfo;
 import org.bbreak.excella.reports.tag.ReportsTagParser;
 import org.junit.Assert;
 
-public class ReportsWorkbookTest extends WorkbookTest {
+public abstract class ReportsWorkbookTest extends WorkbookTest {
 
     /** Excelファイルのバージョン */
     protected String version = null;
