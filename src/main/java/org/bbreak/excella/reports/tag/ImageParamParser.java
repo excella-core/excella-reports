@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -317,10 +318,23 @@ public class ImageParamParser extends ReportsTagParser<String> {
 
         ClientAnchor anchor = helper.createClientAnchor();
 
-        anchor.setRow1( cell.getRowIndex());
-        anchor.setCol1( cell.getColumnIndex());
-        anchor.setRow2( cell.getRowIndex() + 1);
-        anchor.setCol2( cell.getColumnIndex() + 1);
+        Optional<CellRangeAddress> mergedRegionIncludesTargetCell = sheet.getMergedRegions().stream()
+            .filter( c -> c.isInRange( cell))
+            .findFirst();
+        if ( mergedRegionIncludesTargetCell.isPresent()) {
+            CellRangeAddress region = mergedRegionIncludesTargetCell.get();
+            anchor.setRow1( region.getFirstRow());
+            anchor.setCol1( region.getFirstColumn());
+            anchor.setRow2( region.getLastRow()+1);
+            anchor.setCol2( region.getLastColumn()+1);
+        }
+        else {
+            anchor.setRow1( cell.getRowIndex());
+            anchor.setCol1( cell.getColumnIndex());
+            anchor.setRow2( cell.getRowIndex() + 1);
+            anchor.setCol2( cell.getColumnIndex() + 1);
+        }
+
         if ( dx1 != null) {
             anchor.setDx1( dx1);
         }
