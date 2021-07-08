@@ -23,6 +23,7 @@ package org.bbreak.excella.reports.tag;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -106,6 +107,30 @@ public class ImageParamParser extends ReportsTagParser<String> {
     public static final String PARAM_SCALE = "scale";
 
     /**
+     * リサイズ基準指定用のパラメータ(セル基準: {@code "cell"}, 元画像基準: {@code "image"})
+     */
+    public static final String PARAM_RESIZE_BASE = "resizeBase";
+
+    private enum ResizeBase {
+        CELL( "cell"), IMAGE( "image");
+
+        private static final ResizeBase DEFAULT = IMAGE;
+
+        private final String code;
+
+        ResizeBase( String code) {
+            this.code = code;
+        }
+
+        static ResizeBase ofCode( String code) {
+            Optional<ResizeBase> base = Arrays.stream( values())
+                .filter( b -> b.code.equalsIgnoreCase( code))
+                .findAny();
+            return base.orElse( DEFAULT);
+        }
+    }
+
+    /**
      * 図オブジェクトコンテナのキャッシュ
      */
     @SuppressWarnings( "rawtypes")
@@ -170,8 +195,16 @@ public class ImageParamParser extends ReportsTagParser<String> {
                 scale = Double.valueOf( paramDef.get( PARAM_SCALE));
             }
 
+            boolean inMergedRegion = ReportsUtil.getMergedAddress( sheet, tagCell.getRowIndex(), tagCell.getColumnIndex()) != null;
+
+            // リサイズ基準
+            ResizeBase resizeBase = inMergedRegion ? ResizeBase.CELL : ResizeBase.DEFAULT;
+            if ( paramDef.containsKey( PARAM_RESIZE_BASE)) {
+                resizeBase = ResizeBase.ofCode(paramDef.get( PARAM_RESIZE_BASE));
+            }
+
             // 結合セルに含まれるか
-            if ( ReportsUtil.getMergedAddress( sheet, tagCell.getRowIndex(), tagCell.getColumnIndex()) != null) {
+            if ( inMergedRegion) {
                 CellStyle cellStyle = tagCell.getCellStyle();
                 tagCell.setBlank();
                 tagCell.setCellStyle( cellStyle);
@@ -188,7 +221,7 @@ public class ImageParamParser extends ReportsTagParser<String> {
             }
 
             if ( paramValue != null) {
-                replaceImageValue( sheet, tagCell, paramValue, dx1, dy1, scale);
+                replaceImageValue( sheet, tagCell, paramValue, dx1, dy1, scale, resizeBase);
             }
 
         }
@@ -274,9 +307,10 @@ public class ImageParamParser extends ReportsTagParser<String> {
      * @param dx1 画像の幅調整値
      * @param dy1 画像の高さ調整値
      * @param scale 画像の倍率値
+     * @param resizeBase リサイズ基準
      * @throws ParseException
      */
-    public void replaceImageValue( Sheet sheet, Cell cell, String filePath, Integer dx1, Integer dy1, Double scale) throws ParseException {
+    public void replaceImageValue( Sheet sheet, Cell cell, String filePath, Integer dx1, Integer dy1, Double scale, ResizeBase resizeBase) throws ParseException {
 
         Workbook workbook = sheet.getWorkbook();
 
@@ -325,8 +359,8 @@ public class ImageParamParser extends ReportsTagParser<String> {
             CellRangeAddress region = mergedRegionIncludesTargetCell.get();
             anchor.setRow1( region.getFirstRow());
             anchor.setCol1( region.getFirstColumn());
-            anchor.setRow2( region.getLastRow()+1);
-            anchor.setCol2( region.getLastColumn()+1);
+            anchor.setRow2( region.getLastRow() + 1);
+            anchor.setCol2( region.getLastColumn() + 1);
         }
         else {
             anchor.setRow1( cell.getRowIndex());
@@ -343,8 +377,12 @@ public class ImageParamParser extends ReportsTagParser<String> {
         }
 
         Picture picture = drawing.createPicture( anchor, pictureIdx);
-        picture.resize( scale);
-
+        if ( resizeBase == ResizeBase.IMAGE) {
+            picture.resize();
+        }
+        if (scale != 1.0) {
+        	picture.resize( scale);
+        }
     }
 
     /*
