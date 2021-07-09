@@ -232,6 +232,7 @@ public class BlockRowRepeatParamParser extends ReportsTagParser<Object[]> {
             Object[][] blockCellValues = ReportsUtil.getBlockCellValue( sheet, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
             CellStyle[][] blockCellStyles = ReportsUtil.getBlockCellStyle( sheet, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
             CellType[][] blockCellTypes = ReportsUtil.getBlockCellType( sheet, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
+            String[][] blockCellFormulas = ReportsUtil.getBlockCellFormulas( sheet, defaultFromCellRowIndex, defaultToCellRowIndex, defaultFromCellColIndex, defaultToCellColIndex);
             float[] rowHeight = ReportsUtil.getRowHeight( sheet, defaultFromCellRowIndex, defaultToCellRowIndex);
 
             // 対象シートより結合セルを取得
@@ -318,6 +319,7 @@ public class BlockRowRepeatParamParser extends ReportsTagParser<Object[]> {
                             CellType cellType = blockCellTypes[rowIdx][colIdx];
                             // セル値の取得
                             Object cellValue = blockCellValues[rowIdx][colIdx];
+                            String cellFormula = blockCellFormulas[rowIdx][colIdx];
                             // セルスタイルの取得
                             CellStyle cellStyle = blockCellStyles[rowIdx][colIdx];
                             // セルに設定すべき情報（タイプ、値、スタイルのいずれか）が有る場合のみ生成する
@@ -327,10 +329,12 @@ public class BlockRowRepeatParamParser extends ReportsTagParser<Object[]> {
 
                             // セル設定
                             if ( cell != null) {
-                                // セルタイプの設定
-                                cell.setCellType( cellType);
-                                // セルの値の設定
-                                PoiUtil.setCellValue( cell, cellValue);
+                                if ( cellType == CellType.FORMULA) {
+                                    cell.setCellFormula( cellFormula);
+                                } else {
+                                    // セルの値の設定
+                                    PoiUtil.setCellValue( cell, cellValue);
+                                }
                                 // セルのスタイルの設定
                                 if ( cellStyle == null) {
                                     log.info( "Cell Style at [" + rowIdx + "," + colIdx + "] is not available. Skipping setCellValue()");

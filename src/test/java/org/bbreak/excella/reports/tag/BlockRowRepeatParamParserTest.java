@@ -26,12 +26,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.core.util.PoiUtil;
 import org.bbreak.excella.reports.ReportsTestUtil;
@@ -699,11 +702,14 @@ public class BlockRowRepeatParamParserTest  extends ReportsWorkbookTest {
         assertEquals( "てすと", parser.getTag());
     }
     
-    
     private void checkSheet( String expectedSheetName, Sheet actualSheet, boolean outputExcel) {
+        Workbook expectedWorkbook = getExpectedWorkbook();
+        checkSheet( expectedWorkbook, expectedSheetName, actualSheet, outputExcel);
+    }
+
+    private void checkSheet( Workbook expectedWorkbook, String expectedSheetName, Sheet actualSheet, boolean outputExcel) {
 
         // 期待値ブックの読み込み
-        Workbook expectedWorkbook = getExpectedWorkbook();
         Sheet expectedSheet = expectedWorkbook.getSheet( expectedSheetName);
 
         try {
@@ -714,13 +720,8 @@ public class BlockRowRepeatParamParserTest  extends ReportsWorkbookTest {
         } finally {
             String tmpDirPath = ReportsTestUtil.getTestOutputDir();
             try {
-                String filepath = null;
                 Date now = new Date();
-                if ( version.equals( "2007")) {
-                    filepath = tmpDirPath + this.getClass().getSimpleName() + now.getTime() + ".xlsx";
-                } else {
-                    filepath = tmpDirPath + this.getClass().getSimpleName() + now.getTime() + ".xls";
-                }
+                String filepath = tmpDirPath + this.getClass().getSimpleName() + now.getTime() + getSuffix();
                 PoiUtil.writeBook( actualSheet.getWorkbook(), filepath);
 
             } catch ( IOException e) {
@@ -746,6 +747,39 @@ public class BlockRowRepeatParamParserTest  extends ReportsWorkbookTest {
         assertArrayEquals( exceptedBeforeCells, actualBreforeCells);
         assertArrayEquals( exceptedAfterCells, actualAfterCells);
 
+    }
+
+    /**
+     * Test case for <a href="https://github.com/excella-core/excella-reports/issues/57">Issue #57</a>.
+     */
+    @Test
+    public void testRepeatFormulas() throws ParseException, EncryptedDocumentException, IOException {
+        List<ParamInfo> params = new ArrayList<>();
+        for ( int i = 0; i < 3; i++) {
+            ParamInfo param = new ParamInfo();
+            param.addParam( SingleParamParser.DEFAULT_TAG, "col1", BigDecimal.valueOf( 1).movePointRight( i));
+            param.addParam( SingleParamParser.DEFAULT_TAG, "col2", BigDecimal.valueOf( 2).movePointRight( i));
+            param.addParam( SingleParamParser.DEFAULT_TAG, "col3", BigDecimal.valueOf( 3).movePointRight( i));
+            params.add( param);
+        }
+        Workbook workbook = WorkbookFactory.create( getClass().getResourceAsStream( "BlockRowRepeatParamParser_formulas" + getSuffix()));
+
+        ReportBook reportBook = new ReportBook( "", "test", new ConvertConfiguration[] {});
+        ReportSheet reportSheet = new ReportSheet( "issue57");
+        reportSheet.addParam( BlockRowRepeatParamParser.DEFAULT_TAG, "data", params.toArray());
+
+        Sheet sheet = workbook.getSheet( "issue-57");
+        ReportsParserInfo reportsParserInfo = new ReportsParserInfo();
+        reportsParserInfo.setReportParsers( new ArrayList<ReportsTagParser<?>>( ReportCreateHelper.createDefaultParsers().values()));
+        reportsParserInfo.setReportBook( reportBook);
+        reportsParserInfo.setParamInfo( reportSheet.getParamInfo());
+        BlockRowRepeatParamParser parser = new BlockRowRepeatParamParser();
+
+        parseSheet( parser, sheet, reportsParserInfo);
+        
+        Workbook expectedWorkbook = WorkbookFactory.create( //
+            getClass().getResourceAsStream( "BlockRowRepeatParamParser_formulas_expected" + getSuffix()));
+        checkSheet( expectedWorkbook, "issue-57", sheet, true);
     }
 
 }

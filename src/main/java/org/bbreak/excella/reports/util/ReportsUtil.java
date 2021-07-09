@@ -29,9 +29,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.PrintSetup;
@@ -429,22 +432,7 @@ public final class ReportsUtil {
      * @return セル文字列
      */
     public static Object[][] getBlockCellValue( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex) {
-        Object[][] blockCellValue = new Object[bEndRowIndex - bStartRowIndex + 1][bEndColIndex - bStartColIndex + 1];
-        int row = 0;
-        for ( int bRowIndex = bStartRowIndex; bRowIndex <= bEndRowIndex; bRowIndex++) {
-            int col = 0;
-            for ( int bColIndex = bStartColIndex; bColIndex <= bEndColIndex; bColIndex++) {
-                if ( sheet.getRow( bRowIndex) != null && sheet.getRow( bRowIndex).getCell( bColIndex) != null) {
-
-                    blockCellValue[row][col] = PoiUtil.getCellValue( sheet.getRow( bRowIndex).getCell( bColIndex));
-                } else {
-                    blockCellValue[row][col] = null;
-                }
-                col++;
-            }
-            row++;
-        }
-        return blockCellValue;
+        return getBlockValues( sheet, bStartRowIndex, bEndRowIndex, bStartColIndex, bEndColIndex, (i,j) -> new Object[i][j], PoiUtil::getCellValue, null);
     }
 
     /**
@@ -458,24 +446,7 @@ public final class ReportsUtil {
      * @return セルスタイル
      */
     public static CellStyle[][] getBlockCellStyle( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex) {
-        CellStyle[][] blockCellStyle = new CellStyle[bEndRowIndex - bStartRowIndex + 1][bEndColIndex - bStartColIndex + 1];
-        int row = 0;
-        for ( int bRowIndex = bStartRowIndex; bRowIndex <= bEndRowIndex; bRowIndex++) {
-            int col = 0;
-            for ( int bColIndex = bStartColIndex; bColIndex <= bEndColIndex; bColIndex++) {
-                if ( sheet.getRow( bRowIndex) != null && sheet.getRow( bRowIndex).getCell( bColIndex) != null) {
-
-                    blockCellStyle[row][col] = sheet.getRow( bRowIndex).getCell( bColIndex).getCellStyle();
-                } else {
-                    blockCellStyle[row][col] = null;
-                }
-
-                col++;
-            }
-            row++;
-        }
-
-        return blockCellStyle;
+        return getBlockValues( sheet, bStartRowIndex, bEndRowIndex, bStartColIndex, bEndColIndex, (i,j) -> new CellStyle[i][j], Cell::getCellStyle, null);
     }
 
     /**
@@ -489,16 +460,35 @@ public final class ReportsUtil {
      * @return セルのタイプ
      */
     public static CellType[][] getBlockCellType( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex) {
-        CellType[][] blockCellType = new CellType[bEndRowIndex - bStartRowIndex + 1][bEndColIndex - bStartColIndex + 1];
+        return getBlockValues( sheet, bStartRowIndex, bEndRowIndex, bStartColIndex, bEndColIndex, (i,j) -> new CellType[i][j], Cell::getCellType, CellType.BLANK);
+    }
+
+    /**
+     * 対象シートの指定された範囲のセルの数式[行番号][列番号]の形式で取得する。
+     * 
+     * @param sheet 対象となるシート
+     * @param bStartRowIndex 範囲開始行番号
+     * @param bEndRowIndex 範囲終了行番号
+     * @param bStartColIndex 範囲開始列番号
+     * @param bEndColIndex 範囲終了列番号
+     * @return セルの数式
+     */
+    public static String[][] getBlockCellFormulas( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex) {
+        Function<Cell, String> extractor = c -> c.getCellType() == CellType.FORMULA ? c.getCellFormula() : null;
+        return getBlockValues( sheet, bStartRowIndex, bEndRowIndex, bStartColIndex, bEndColIndex, (i,j) -> new String[i][j], extractor, null);
+    }
+
+    private static <T> T[][] getBlockValues( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex, BiFunction<Integer, Integer, T[][]> arrayCreator, Function<Cell, T> extractor, T defaultValue) {
+        T[][] blockValues = arrayCreator.apply( bEndRowIndex - bStartRowIndex + 1, bEndColIndex - bStartColIndex + 1);
         int rowIdx = 0;
         for ( int bRowIndex = bStartRowIndex; bRowIndex <= bEndRowIndex; bRowIndex++) {
             int colIdx = 0;
             for ( int bColIndex = bStartColIndex; bColIndex <= bEndColIndex; bColIndex++) {
                 Row row = sheet.getRow( bRowIndex);
                 if ( row != null && row.getCell( bColIndex) != null) {
-                    blockCellType[rowIdx][colIdx] = row.getCell( bColIndex).getCellType();
+                    blockValues[rowIdx][colIdx] = extractor.apply( row.getCell( bColIndex));
                 } else {
-                    blockCellType[rowIdx][colIdx] = CellType.BLANK;
+                    blockValues[rowIdx][colIdx] = defaultValue;
                 }
 
                 colIdx++;
@@ -506,7 +496,7 @@ public final class ReportsUtil {
             rowIdx++;
         }
 
-        return blockCellType;
+        return blockValues;
     }
 
     /**
