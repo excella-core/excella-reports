@@ -56,14 +56,7 @@ public class ReportsWorkbookTest extends WorkbookTest {
 
         Workbook workbook = null;
 
-        String filename = this.getClass().getSimpleName();
-        
-        if ( version.equals( "2007")) {
-            filename = filename + "_expected.xlsx";
-        } else if ( version.equals( "2003")) {
-            filename = filename + "_expected.xls";
-        }
-        
+        String filename = this.getClass().getSimpleName() + "_expected" + getSuffix();
         
         URL url = this.getClass().getResource( filename);
         try {
@@ -77,7 +70,13 @@ public class ReportsWorkbookTest extends WorkbookTest {
         return workbook;
     }
 
-    
+    protected String getSuffix() {
+        if ( version.equals( "2007")) {
+            return ".xlsx";
+        }
+        return ".xls";
+    }
+
     protected List<ParsedReportInfo> parseSheet( ReportsTagParser<?> parser, Sheet sheet, ReportsParserInfo reportsParserInfo) throws ParseException {
 
         List<ParsedReportInfo> parsedList = new ArrayList<ParsedReportInfo>();
