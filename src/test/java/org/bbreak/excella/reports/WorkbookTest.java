@@ -20,10 +20,8 @@
 
 package org.bbreak.excella.reports;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Arrays;
@@ -31,10 +29,9 @@ import java.util.Collection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -92,39 +89,9 @@ public class WorkbookTest {
         URL url = this.getClass().getResource( filename);
         try {
             filepath = URLDecoder.decode( url.getFile(), "UTF-8");
-
-            if ( filepath.endsWith( ".xlsx")) {
-                try {
-                    workbook = new XSSFWorkbook( filepath);
-                } catch ( IOException e) {
-                    Assert.fail();
-                }
-            } else if ( filepath.endsWith( ".xls")) {
-                FileInputStream stream = null;
-                try {
-                    stream = new FileInputStream( filepath);
-                } catch ( FileNotFoundException e) {
-                    Assert.fail();
-                }
-                POIFSFileSystem fs = null;
-                try {
-                    fs = new POIFSFileSystem( stream);
-                } catch ( IOException e) {
-                    Assert.fail();
-                }
-                try {
-                    workbook = new HSSFWorkbook( fs);
-                } catch ( IOException e) {
-                    Assert.fail();
-                }
-                try {
-                    stream.close();
-                } catch ( IOException e) {
-                    Assert.fail();
-                }
-            }
-        } catch ( UnsupportedEncodingException e) {
-            Assert.fail();
+            workbook = WorkbookFactory.create(new File(filepath));
+        } catch (IOException | EncryptedDocumentException e) {
+            Assert.fail(e.toString());
         }
         return workbook;
     }

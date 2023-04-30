@@ -20,22 +20,19 @@
 
 package org.bbreak.excella.reports.processor;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.reports.WorkbookTest;
 import org.bbreak.excella.reports.model.ParsedReportInfo;
@@ -64,8 +61,8 @@ public class ReportsWorkbookTest extends WorkbookTest {
             
             workbook = getWorkbook(path);
 
-        } catch ( UnsupportedEncodingException e) {
-            Assert.fail();
+        } catch (IOException | EncryptedDocumentException e) {
+            Assert.fail(e.toString());
         }
         return workbook;
     }
@@ -102,41 +99,8 @@ public class ReportsWorkbookTest extends WorkbookTest {
     }
     
     
-    protected Workbook getWorkbook(String filepath) {
-
-        Workbook workbook = null;
-
-        if ( filepath.endsWith( ".xlsx")) {
-            try {
-                workbook = new XSSFWorkbook( filepath);
-            } catch ( IOException e) {
-                Assert.fail();
-            }
-        } else if ( filepath.endsWith( ".xls")) {
-            FileInputStream stream = null;
-            try {
-                stream = new FileInputStream( filepath);
-            } catch ( FileNotFoundException e) {
-                Assert.fail();
-            }
-            POIFSFileSystem fs = null;
-            try {
-                fs = new POIFSFileSystem( stream);
-            } catch ( IOException e) {
-                Assert.fail();
-            }
-            try {
-                workbook = new HSSFWorkbook( fs);
-            } catch ( IOException e) {
-                Assert.fail();
-            }
-            try {
-                stream.close();
-            } catch ( IOException e) {
-                Assert.fail();
-            }
-        }
-         return workbook;
+    protected Workbook getWorkbook(String filepath) throws EncryptedDocumentException, IOException {
+        return WorkbookFactory.create(new File(filepath));
     }
 
 

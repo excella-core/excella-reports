@@ -33,7 +33,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -42,7 +41,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.core.util.PoiUtil;
 import org.bbreak.excella.reports.model.ParamInfo;
@@ -366,12 +364,7 @@ public final class ReportsUtil {
 
         int fromSheetMargNums = sheet.getNumMergedRegions();
         for ( int i = 0; i < fromSheetMargNums; i++) {
-            CellRangeAddress mergedAddress = null;
-            if ( sheet instanceof XSSFSheet) {
-                mergedAddress = (( XSSFSheet) sheet).getMergedRegion( i);
-            } else if ( sheet instanceof HSSFSheet) {
-                mergedAddress = (( HSSFSheet) sheet).getMergedRegion( i);
-            }
+            CellRangeAddress mergedAddress = sheet.getMergedRegion(i);
 
             // fromAddressに入ってるか
             if ( PoiUtil.containCellRangeAddress( mergedAddress, rangeAddress)) {
