@@ -20,7 +20,12 @@
 
 package org.bbreak.excella.reports.processor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
@@ -39,8 +44,8 @@ import org.bbreak.excella.core.exception.ExportException;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.reports.ReportsTestUtil;
 import org.bbreak.excella.reports.exporter.ReportBookExporter;
+import org.bbreak.excella.reports.listener.PreBookParseListener;
 import org.bbreak.excella.reports.listener.ReportProcessAdaptor;
-import org.bbreak.excella.reports.listener.ReportProcessListener;
 import org.bbreak.excella.reports.model.ConvertConfiguration;
 import org.bbreak.excella.reports.model.ParsedReportInfo;
 import org.bbreak.excella.reports.model.ReportBook;
@@ -82,7 +87,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
     public void testReportProcessor() {
         ReportProcessor processor = new ReportProcessor();
         // デフォルトタグパーサー
-        Map<String, ReportsTagParser<?>> actualParsers = ( Map<String, ReportsTagParser<?>>) getPrivateFiled( processor, "parsers");
+        Map<String, ReportsTagParser<?>> actualParsers = ( Map<String, ReportsTagParser<?>>) getPrivateField( processor, "parsers");
         Map<String, ReportsTagParser<?>> expectedParsers = ReportCreateHelper.createDefaultParsers();
 
         assertEquals( expectedParsers.size(), actualParsers.size());
@@ -94,7 +99,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
         }
 
         // デフォルトエクスポーター
-        Map<String, ReportBookExporter> actualExporters = ( Map<String, ReportBookExporter>) getPrivateFiled( processor, "exporters");
+        Map<String, ReportBookExporter> actualExporters = ( Map<String, ReportBookExporter>) getPrivateField( processor, "exporters");
         Map<String, ReportBookExporter> expectedExporters = ReportCreateHelper.createDefaultExporters();
 
         assertEquals( expectedExporters.size(), actualExporters.size());
@@ -400,7 +405,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
         ReportsTagParser<?> addparser = new CustomTagParser( "$CUSTOM");
         processor.addReportsTagParser( addparser);
 
-        Map<String, ReportsTagParser<?>> actualParsers = ( Map<String, ReportsTagParser<?>>) getPrivateFiled( processor, "parsers");
+        Map<String, ReportsTagParser<?>> actualParsers = ( Map<String, ReportsTagParser<?>>) getPrivateField( processor, "parsers");
         assertEquals( addparser, actualParsers.get( "$CUSTOM"));
     }
 
@@ -413,7 +418,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
         ReportProcessor processor = new ReportProcessor();
 
         processor.removeReportsTagParser( "");
-        Map<String, ReportsTagParser<?>> actualParsers = ( Map<String, ReportsTagParser<?>>) getPrivateFiled( processor, "parsers");
+        Map<String, ReportsTagParser<?>> actualParsers = ( Map<String, ReportsTagParser<?>>) getPrivateField( processor, "parsers");
 
         assertNull( actualParsers.get( ""));
     }
@@ -425,7 +430,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
     public void testClearReportsTagParser() {
         ReportProcessor processor = new ReportProcessor();
         processor.clearReportsTagParser();
-        Map<String, ReportsTagParser<?>> actualParsers = ( Map<String, ReportsTagParser<?>>) getPrivateFiled( processor, "parsers");
+        Map<String, ReportsTagParser<?>> actualParsers = ( Map<String, ReportsTagParser<?>>) getPrivateField( processor, "parsers");
 
         assertTrue( actualParsers.isEmpty());
     }
@@ -440,7 +445,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
         ReportBookExporter bookExporter = new CustomExporter();
         processor.addReportBookExporter( bookExporter);
 
-        Map<String, ReportBookExporter> actualExporters = ( Map<String, ReportBookExporter>) getPrivateFiled( processor, "exporters");
+        Map<String, ReportBookExporter> actualExporters = ( Map<String, ReportBookExporter>) getPrivateField( processor, "exporters");
 
         assertEquals( bookExporter, actualExporters.get( "CUSTOM"));
     }
@@ -454,7 +459,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
 
         processor.removeReportBookExporter( "EXCEL");
 
-        Map<String, ReportBookExporter> actualExporters = ( Map<String, ReportBookExporter>) getPrivateFiled( processor, "exporters");
+        Map<String, ReportBookExporter> actualExporters = ( Map<String, ReportBookExporter>) getPrivateField( processor, "exporters");
 
         assertNull( actualExporters.get( "EXCEL"));
     }
@@ -468,7 +473,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
 
         processor.clearReportBookExporter();
 
-        Map<String, ReportBookExporter> actualExporters = ( Map<String, ReportBookExporter>) getPrivateFiled( processor, "exporters");
+        Map<String, ReportBookExporter> actualExporters = ( Map<String, ReportBookExporter>) getPrivateField( processor, "exporters");
 
         assertTrue( actualExporters.isEmpty());
     }
@@ -481,7 +486,8 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
         ReportProcessor processor = new ReportProcessor();
         CustomListener listener = new CustomListener();
 
-        List<ReportProcessListener> listenerList = ( List<ReportProcessListener>) getPrivateFiled( processor, "listeners");
+        ReportProcessListenerContainer listeners = processor.listeners;
+        List<PreBookParseListener> listenerList = ( List<PreBookParseListener>) getPrivateField( listeners, "preParseListeners");
 
         assertTrue( listenerList.isEmpty());
 
@@ -502,7 +508,8 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
         CustomListener listener = new CustomListener();
         processor.addReportProcessListener( listener);
 
-        List<ReportProcessListener> listenerList = ( List<ReportProcessListener>) getPrivateFiled( processor, "listeners");
+        ReportProcessListenerContainer listeners = processor.listeners;
+        List<PreBookParseListener> listenerList = ( List<PreBookParseListener>) getPrivateField( listeners, "preParseListeners");
 
         assertEquals( 1, listenerList.size());
 
@@ -512,7 +519,7 @@ public class ReportProcessorTest extends ReportsWorkbookTest {
 
     }
 
-    private Object getPrivateFiled( Object object, String fieldName) {
+    private Object getPrivateField( Object object, String fieldName) {
 
         Field field = null;
         Object res = null;

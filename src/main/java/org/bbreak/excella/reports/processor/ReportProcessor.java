@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -42,8 +41,12 @@ import org.bbreak.excella.core.SheetData;
 import org.bbreak.excella.core.exception.ExportException;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.core.exporter.book.BookExporter;
+import org.bbreak.excella.core.listener.PostSheetParseListener;
+import org.bbreak.excella.core.listener.PreSheetParseListener;
 import org.bbreak.excella.reports.exporter.ReportBookExporter;
 import org.bbreak.excella.reports.listener.BreakAdapter;
+import org.bbreak.excella.reports.listener.PostBookParseListener;
+import org.bbreak.excella.reports.listener.PreBookParseListener;
 import org.bbreak.excella.reports.listener.RemoveAdapter;
 import org.bbreak.excella.reports.listener.ReportProcessListener;
 import org.bbreak.excella.reports.model.ConvertConfiguration;
@@ -76,7 +79,7 @@ public class ReportProcessor {
     /**
      * リスナー
      */
-    private List<ReportProcessListener> listeners = new ArrayList<ReportProcessListener>();
+    final ReportProcessListenerContainer listeners = new ReportProcessListenerContainer();
 
     /**
      * コンストラクタ
@@ -122,9 +125,7 @@ public class ReportProcessor {
 
         Workbook workbook = getTemplateWorkbook( reportBook);
 
-        for ( ReportProcessListener listener : listeners) {
-            listener.preBookParse( workbook, reportBook);
-        }
+        listeners.forEachPreBookParseListeners( l -> l.preBookParse( workbook, reportBook));
 
         checkReportBook( reportBook);
 
@@ -141,9 +142,8 @@ public class ReportProcessor {
         // リスナーの設定
         controller.addSheetParseListener( new RemoveAdapter());
         controller.addSheetParseListener( new BreakAdapter());
-        for ( ReportProcessListener listener : listeners) {
-            controller.addSheetParseListener( listener);
-        }
+        listeners.forEachPreSheetParseListeners( controller::addPreSheetParseListener);
+        listeners.forEachPostSheetParseListeners( controller::addPostSheetParseListener);
 
         // Exporterの設定
         for ( ConvertConfiguration configuration : reportBook.getConfigurations()) {
@@ -191,9 +191,7 @@ public class ReportProcessor {
         }
 
         // 出力処理前にリスナー呼び出し
-        for ( ReportProcessListener listener : listeners) {
-            listener.postBookParse( workbook, reportBook);
-        }
+        listeners.forEachPostBookParseListeners( l -> l.postBookParse( workbook, reportBook));
 
         // 出力処理の実行
         for ( BookExporter exporter : controller.getExporter()) {
@@ -308,7 +306,7 @@ public class ReportProcessor {
      * @param listener リスナー
      */
     public void addReportProcessListener( ReportProcessListener listener) {
-        listeners.add( listener);
+        listeners.addListener( listener);
     }
 
     /**
@@ -317,7 +315,132 @@ public class ReportProcessor {
      * @param listener リスナー
      */
     public void removeReportProcessListener( ReportProcessListener listener) {
-        listeners.remove( listener);
+        listeners.removeListener( listener);
+    }
+
+    /**
+     * すべてのリスナーをクリアする。
+     * 
+     * @since 2.2
+     */
+    public void clearReportProcessListener() {
+        listeners.clearListeners();
+    }
+
+    /**
+     * ブック解析前に処理を行うリスナーを追加する。
+     * 
+     * @param listener リスナー
+     * @since 2.2
+     */
+    public void addListener( PreBookParseListener listener) {
+        listeners.addPreBookParseListener( listener);
+    }
+
+    /**
+     * ブック解析前に処理を行うリスナーを削除する。
+     * 
+     * @param listener リスナー
+     * @since 2.2
+     */
+    public void removeListener( PreBookParseListener listener) {
+        listeners.removePreBookParseListener( listener);
+    }
+
+    /**
+     * ブック解析前に処理を行うリスナーをクリアする。
+     * 
+     * @since 2.2
+     */
+    public void clearPreBookParseListeners() {
+        listeners.clearPreBookParseListeners();
+    }
+
+    /**
+     * シート解析前に処理を行うリスナーを追加する。
+     * 
+     * @param listener リスナー
+     * @since 2.2
+     */
+    public void addListener( PreSheetParseListener listener) {
+        listeners.addPreSheetParseListener( listener);
+    }
+
+    /**
+     * シート解析前に処理を行うリスナーを削除する。
+     * 
+     * @param listener リスナー
+     * @since 2.2
+     */
+    public void removeListener( PreSheetParseListener listener) {
+        listeners.removePreSheetParseListener( listener);
+    }
+
+    /**
+     * シート解析前に処理を行うリスナーをクリアする。
+     * 
+     * @since 2.2
+     */
+    public void clearPreSheetParseListeners() {
+        listeners.clearPreSheetParseListeners();
+    }
+
+    /**
+     * シート解析後に処理を行うリスナーを追加する。
+     * 
+     * @param listener リスナー
+     * @since 2.2
+     */
+    public void addListener( PostSheetParseListener listener) {
+        listeners.addPostSheetParseListener( listener);
+    }
+
+    /**
+     * シート解析後に処理を行うリスナーを削除する。
+     * 
+     * @param listener リスナー
+     * @since 2.2
+     */
+    public void removeListener( PostSheetParseListener listener) {
+        listeners.removePostSheetParseListener( listener);
+    }
+
+    /**
+     * シート解析後に処理を行うリスナーをクリアする。
+     * 
+     * @since 2.2
+     */
+    public void clearPostSheetParseListeners() {
+        listeners.clearPostSheetParseListeners();
+    }
+
+    /**
+     * ブック解析後に処理を行うリスナーを追加する。
+     * 
+     * @param listener リスナー
+     * @since 2.2
+     */
+    public void addListener( PostBookParseListener listener) {
+        listeners.addPostBookParseListener( listener);
+    }
+
+    /**
+     * ブック解析後に処理を行うリスナーをクリアする。
+     * 
+     * @param listener リスナー
+     * @since 2.2
+     */
+    public void removeListener( PostBookParseListener listener) {
+        listeners.removePostBookParseListener( listener);
+    }
+
+    /**
+     * ブック解析後に処理を行うリスナーをクリアする。
+     * 
+     * @since 2.2
+     */
+    public void clearPostBookParseListeners() {
+        listeners.clearPostBookParseListeners();
     }
 
     /**
