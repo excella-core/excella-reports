@@ -89,9 +89,9 @@ public class WorkbookTest {
         URL url = this.getClass().getResource( filename);
         try {
             filepath = URLDecoder.decode( url.getFile(), "UTF-8");
-            workbook = WorkbookFactory.create(new File(filepath));
-        } catch (IOException | EncryptedDocumentException e) {
-            Assert.fail(e.toString());
+            workbook = WorkbookFactory.create( new File( filepath));
+        } catch ( IOException | EncryptedDocumentException e) {
+            Assert.fail( e.toString());
         }
         return workbook;
     }

@@ -89,8 +89,7 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
     }
 
     /**
-     * {@link org.bbreak.excella.reports.tag.ImageParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)}
-     * のためのテスト・メソッド。
+     * {@link org.bbreak.excella.reports.tag.ImageParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)} のためのテスト・メソッド。
      * 
      * @throws IOException
      * @throws EncryptedDocumentException
