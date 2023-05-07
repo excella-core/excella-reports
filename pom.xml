@@ -32,7 +32,7 @@
     <repository>
 	  <id>excella.bbreak.org</id>
       <name>bBreak Systems Excella</name>
-      <url>http://excella-core.github.io/maven2/</url>    
+      <url>https://excella-core.github.io/maven2/</url>    
     </repository>
   </repositories>
   <build>
