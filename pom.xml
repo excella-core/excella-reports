@@ -32,7 +32,7 @@
     <repository>
 	  <id>excella.bbreak.org</id>
       <name>bBreak Systems Excella</name>
-      <url>http://excella-core.github.io/maven2/</url>    
+      <url>https://excella-core.github.io/maven2/</url>    
     </repository>
   </repositories>
   <build>
@@ -114,7 +114,7 @@
 		<plugin>
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
-			<version>0.8.6</version>
+			<version>0.8.10</version>
 			<executions>
 				<execution>
 					<id>prepare-agent</id>
