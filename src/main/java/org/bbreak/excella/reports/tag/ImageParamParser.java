@@ -45,9 +45,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.bbreak.excella.core.CellClone;
 import org.bbreak.excella.core.exception.ParseException;
-import org.bbreak.excella.core.util.PoiUtil;
 import org.bbreak.excella.core.util.TagUtil;
 import org.bbreak.excella.reports.model.ParamInfo;
 import org.bbreak.excella.reports.model.ParsedReportInfo;
@@ -203,15 +201,9 @@ public class ImageParamParser extends ReportsTagParser<String> {
                 resizeBase = ResizeBase.ofCode(paramDef.get( PARAM_RESIZE_BASE));
             }
 
-            // 結合セルに含まれるか
-            if ( inMergedRegion) {
-                CellStyle cellStyle = tagCell.getCellStyle();
-                tagCell.setBlank();
-                tagCell.setCellStyle( cellStyle);
-            } else {
-                tagCell = new CellClone( tagCell);
-                PoiUtil.clearCell( sheet, new CellRangeAddress( tagCell.getRowIndex(), tagCell.getRowIndex(), tagCell.getColumnIndex(), tagCell.getColumnIndex()));
-            }
+            CellStyle cellStyle = tagCell.getCellStyle();
+            tagCell.setBlank();
+            tagCell.setCellStyle( cellStyle);
 
             if ( log.isDebugEnabled()) {
                 Workbook workbook = sheet.getWorkbook();
