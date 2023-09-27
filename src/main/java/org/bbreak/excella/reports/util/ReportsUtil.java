@@ -33,7 +33,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -42,7 +41,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.bbreak.excella.core.exception.ParseException;
 import org.bbreak.excella.core.util.PoiUtil;
 import org.bbreak.excella.reports.model.ParamInfo;
@@ -366,12 +364,7 @@ public final class ReportsUtil {
 
         int fromSheetMargNums = sheet.getNumMergedRegions();
         for ( int i = 0; i < fromSheetMargNums; i++) {
-            CellRangeAddress mergedAddress = null;
-            if ( sheet instanceof XSSFSheet) {
-                mergedAddress = (( XSSFSheet) sheet).getMergedRegion( i);
-            } else if ( sheet instanceof HSSFSheet) {
-                mergedAddress = (( HSSFSheet) sheet).getMergedRegion( i);
-            }
+            CellRangeAddress mergedAddress = sheet.getMergedRegion( i);
 
             // fromAddressに入ってるか
             if ( PoiUtil.containCellRangeAddress( mergedAddress, rangeAddress)) {
@@ -446,7 +439,7 @@ public final class ReportsUtil {
      * @return セルスタイル
      */
     public static CellStyle[][] getBlockCellStyle( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex) {
-        return getBlockValues( sheet, bStartRowIndex, bEndRowIndex, bStartColIndex, bEndColIndex, (i,j) -> new CellStyle[i][j], Cell::getCellStyle, null);
+        return getBlockValues( sheet, bStartRowIndex, bEndRowIndex, bStartColIndex, bEndColIndex, ( i, j) -> new CellStyle[i][j], Cell::getCellStyle, null);
     }
 
     /**
@@ -460,7 +453,7 @@ public final class ReportsUtil {
      * @return セルのタイプ
      */
     public static CellType[][] getBlockCellType( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex) {
-        return getBlockValues( sheet, bStartRowIndex, bEndRowIndex, bStartColIndex, bEndColIndex, (i,j) -> new CellType[i][j], Cell::getCellType, CellType.BLANK);
+        return getBlockValues( sheet, bStartRowIndex, bEndRowIndex, bStartColIndex, bEndColIndex, ( i, j) -> new CellType[i][j], Cell::getCellType, CellType.BLANK);
     }
 
     /**
@@ -475,10 +468,11 @@ public final class ReportsUtil {
      */
     public static String[][] getBlockCellFormulas( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex) {
         Function<Cell, String> extractor = c -> c.getCellType() == CellType.FORMULA ? c.getCellFormula() : null;
-        return getBlockValues( sheet, bStartRowIndex, bEndRowIndex, bStartColIndex, bEndColIndex, (i,j) -> new String[i][j], extractor, null);
+        return getBlockValues( sheet, bStartRowIndex, bEndRowIndex, bStartColIndex, bEndColIndex, ( i, j) -> new String[i][j], extractor, null);
     }
 
-    private static <T> T[][] getBlockValues( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex, BiFunction<Integer, Integer, T[][]> arrayCreator, Function<Cell, T> extractor, T defaultValue) {
+    private static <T> T[][] getBlockValues( Sheet sheet, int bStartRowIndex, int bEndRowIndex, int bStartColIndex, int bEndColIndex, BiFunction<Integer, Integer, T[][]> arrayCreator,
+            Function<Cell, T> extractor, T defaultValue) {
         T[][] blockValues = arrayCreator.apply( bEndRowIndex - bStartRowIndex + 1, bEndColIndex - bStartColIndex + 1);
         int rowIdx = 0;
         for ( int bRowIndex = bStartRowIndex; bRowIndex <= bEndRowIndex; bRowIndex++) {
@@ -624,9 +618,10 @@ public final class ReportsUtil {
         }
         return true;
     }
-    
+
     /**
      * fromIdxのシートからtoIdxシートへの印刷設定のコピーを行う
+     * 
      * @param workbook fromIdx、toIdxのシートを含むworkbook
      * @param fromIdx コピー元シートのインデックス
      * @param sheet コピー先シート

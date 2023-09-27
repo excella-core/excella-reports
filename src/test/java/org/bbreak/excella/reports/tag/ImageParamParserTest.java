@@ -34,6 +34,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.bbreak.excella.core.exception.ParseException;
@@ -89,9 +90,12 @@ public class ImageParamParserTest extends ReportsWorkbookTest {
 
     /**
      * {@link org.bbreak.excella.reports.tag.ImageParamParser#parse(org.apache.poi.ss.usermodel.Sheet, org.apache.poi.ss.usermodel.Cell, java.lang.Object)} のためのテスト・メソッド。
+     * 
+     * @throws IOException
+     * @throws EncryptedDocumentException
      */
     @Test
-    public void testParseSheetCellObject() {
+    public void testParseSheetCellObject() throws EncryptedDocumentException, IOException {
         // -----------------------
         // □[正常系]通常解析
         // -----------------------

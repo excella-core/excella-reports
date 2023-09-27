@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -187,22 +188,13 @@ public class ReportsTestUtil {
 
         for ( int i = 0; i < actual.getNumMergedRegions(); i++) {
 
-            CellRangeAddress actualAddress = null;
-            if ( expected instanceof HSSFSheet) {
-                actualAddress = (( HSSFSheet) actual).getMergedRegion( i);
-            } else if ( expected instanceof XSSFSheet) {
-                actualAddress = (( XSSFSheet) actual).getMergedRegion( i);
-            }
+            CellRangeAddress actualAddress = actual.getMergedRegion(i);
 
             StringBuffer expectedAdressBuffer = new StringBuffer();
             boolean equalAddress = false;
             for ( int j = 0; j < expected.getNumMergedRegions(); j++) {
-                CellRangeAddress expectedAddress = null;
-                if ( expected instanceof HSSFSheet) {
-                    expectedAddress = (( HSSFSheet) expected).getMergedRegion( j);
-                } else if ( expected instanceof XSSFSheet) {
-                    expectedAddress = (( XSSFSheet) expected).getMergedRegion( j);
-                }
+                CellRangeAddress expectedAddress = expected.getMergedRegion(j);
+
                 if ( expectedAddress.toString().equals( actualAddress.toString())) {
                     equalAddress = true;
                     break;
@@ -451,20 +443,8 @@ public class ReportsTestUtil {
             throw new ReportsCheckException( errors);
         }
 
-        String eCellStyleString = null;
-        String aCellStyleString = null;
-
-        if ( expected instanceof HSSFCellStyle) {
-            HSSFCellStyle expectedStyle = ( HSSFCellStyle) expected;
-            HSSFCellStyle actualStyle = ( HSSFCellStyle) actual;
-            eCellStyleString = getCellStyleString( expectedWorkbook, expectedStyle);
-            aCellStyleString = getCellStyleString( actualWorkbook, actualStyle);
-        } else if ( expected instanceof XSSFCellStyle) {
-            XSSFCellStyle expectedStyle = ( XSSFCellStyle) expected;
-            XSSFCellStyle actualStyle = ( XSSFCellStyle) actual;
-            eCellStyleString = getCellStyleString( expectedStyle);
-            aCellStyleString = getCellStyleString( actualStyle);
-        }
+        String eCellStyleString = getCellStyleString(expectedWorkbook, expected);
+        String aCellStyleString = getCellStyleString(actualWorkbook, actual);
 
         if ( !eCellStyleString.equals( aCellStyleString)) {
             errors.add( new CheckMessage( "スタイル", eCellStyleString, aCellStyleString));
@@ -474,131 +454,134 @@ public class ReportsTestUtil {
     }
 
     /**
-     * HSSFスタイルの文字列表現を取得する
+     * スタイルの文字列表現を取得する
      * 
-     * @param workbook ブック
+     * @param workbook  ブック
      * @param cellStyle スタイル
      * @return スタイルの文字列表現
      */
-    private static String getCellStyleString( Workbook workbook, HSSFCellStyle cellStyle) {
+    private static String getCellStyleString(Workbook workbook, CellStyle cellStyle) {
         StringBuffer sb = new StringBuffer();
-        if ( cellStyle != null) {
-            HSSFFont font = cellStyle.getFont( workbook);
-            // sb.append("FontIndex=").append( cellStyle.getFontIndex()).append( ",");
-            sb.append( "Font=").append( getHSSFFontString( ( HSSFWorkbook) workbook, font)).append( ",");
+        if (cellStyle != null) {
+            sb.append("Font=").append(getFontString(workbook, cellStyle)).append(",");
+            sb.append("DataFormat=").append(cellStyle.getDataFormat()).append(",");
+            sb.append("DataFormatString=").append(cellStyle.getDataFormatString()).append(",");
+            sb.append("Hidden=").append(cellStyle.getHidden()).append(",");
+            sb.append("Locked=").append(cellStyle.getLocked()).append(",");
+            sb.append("Alignment=").append(cellStyle.getAlignment()).append(",");
+            sb.append("WrapText=").append(cellStyle.getWrapText()).append(",");
+            sb.append("VerticalAlignment=").append(cellStyle.getVerticalAlignment()).append(",");
+            sb.append("Rotation=").append(cellStyle.getRotation()).append(",");
+            sb.append("Indention=").append(cellStyle.getIndention()).append(",");
+            sb.append("BorderLeft=").append(cellStyle.getBorderLeft()).append(",");
+            sb.append("BorderRight=").append(cellStyle.getBorderRight()).append(",");
+            sb.append("BorderTop=").append(cellStyle.getBorderTop()).append(",");
+            sb.append("BorderBottom=").append(cellStyle.getBorderBottom()).append(",");
 
-            sb.append( "DataFormat=").append( cellStyle.getDataFormat()).append( ",");
-            sb.append( "DataFormatString=").append( cellStyle.getDataFormatString()).append( ",");
-            sb.append( "Hidden=").append( cellStyle.getHidden()).append( ",");
-            sb.append( "Locked=").append( cellStyle.getLocked()).append( ",");
-            sb.append( "Alignment=").append( cellStyle.getAlignmentEnum()).append( ",");
-            sb.append( "WrapText=").append( cellStyle.getWrapText()).append( ",");
-            sb.append( "VerticalAlignment=").append( cellStyle.getVerticalAlignmentEnum()).append( ",");
-            sb.append( "Rotation=").append( cellStyle.getRotation()).append( ",");
-            sb.append( "Indention=").append( cellStyle.getIndention()).append( ",");
-            sb.append( "BorderLeft=").append( cellStyle.getBorderLeftEnum()).append( ",");
-            sb.append( "BorderRight=").append( cellStyle.getBorderRightEnum()).append( ",");
-            sb.append( "BorderTop=").append( cellStyle.getBorderTopEnum()).append( ",");
-            sb.append( "BorderBottom=").append( cellStyle.getBorderBottomEnum()).append( ",");
+            sb.append("LeftBorderColor=").append(getColorString(workbook, cellStyle, ColorPosition.LEFT_BORDER))
+                    .append(",");
+            sb.append("RightBorderColor=").append(getColorString(workbook, cellStyle, ColorPosition.RIGHT_BORDER))
+                    .append(",");
+            sb.append("TopBorderColor=").append(getColorString(workbook, cellStyle, ColorPosition.TOP_BORDER))
+                    .append(",");
+            sb.append("BottomBorderColor=").append(getColorString(workbook, cellStyle, ColorPosition.BOTTOM_BORDER))
+                    .append(",");
 
-            sb.append( "LeftBorderColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getLeftBorderColor())).append( ",");
-            sb.append( "RightBorderColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getRightBorderColor())).append( ",");
-            sb.append( "TopBorderColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getTopBorderColor())).append( ",");
-            sb.append( "BottomBorderColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getBottomBorderColor())).append( ",");
-
-            sb.append( "FillPattern=").append( cellStyle.getFillPatternEnum()).append( ",");
-            sb.append( "FillForegroundColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getFillForegroundColor())).append( ",");
-            sb.append( "FillBackgroundColor=").append( getHSSFColorString( ( HSSFWorkbook) workbook, cellStyle.getFillBackgroundColor()));
+            sb.append("FillPattern=").append(cellStyle.getFillPattern()).append(",");
+            sb.append("FillForegroundColor=").append(getColorString(workbook, cellStyle, ColorPosition.FILL_FOREGROUND))
+                    .append(",");
+            sb.append("FillBackgroundColor=")
+                    .append(getColorString(workbook, cellStyle, ColorPosition.FILL_BACKGROUND));
         }
         return sb.toString();
+    }
+
+    private enum ColorPosition {
+        LEFT_BORDER(CellStyle::getLeftBorderColor, XSSFCellStyle::getLeftBorderXSSFColor),
+        RIGHT_BORDER(CellStyle::getRightBorderColor, XSSFCellStyle::getRightBorderXSSFColor),
+        TOP_BORDER(CellStyle::getTopBorderColor, XSSFCellStyle::getTopBorderXSSFColor),
+        BOTTOM_BORDER(CellStyle::getBottomBorderColor, XSSFCellStyle::getBottomBorderXSSFColor),
+        FILL_FOREGROUND(CellStyle::getFillForegroundColor, XSSFCellStyle::getFillForegroundXSSFColor),
+        FILL_BACKGROUND(CellStyle::getFillBackgroundColor, XSSFCellStyle::getFillBackgroundXSSFColor);
+
+        private final Function<CellStyle, Short> colorIndexAccessor;
+        private final Function<XSSFCellStyle, XSSFColor> xssfColorAccessor;
+
+        ColorPosition(Function<CellStyle, Short> colorIndexAccessor,
+                Function<XSSFCellStyle, XSSFColor> xssfColorAccessor) {
+            this.colorIndexAccessor = colorIndexAccessor;
+            this.xssfColorAccessor = xssfColorAccessor;
+        }
+
+        private short getColorIndex(CellStyle cellStyle) {
+            return colorIndexAccessor.apply(cellStyle);
+        }
+
+        private XSSFColor getXSSFColor(CellStyle cellStyle) {
+            if (cellStyle instanceof XSSFCellStyle) {
+                return xssfColorAccessor.apply((XSSFCellStyle) cellStyle);
+            }
+            throw new IllegalArgumentException("cellStyle is not instanceof XSSFCellStyle: " + cellStyle.getClass());
+        }
+    }
+
+    private static String getFontString(Workbook workbook, CellStyle cellStyle) {
+        if (cellStyle instanceof HSSFCellStyle) {
+            HSSFFont font = ((HSSFCellStyle) cellStyle).getFont(workbook);
+            return getHSSFFontString((HSSFWorkbook) workbook, font);
+        } else if (cellStyle instanceof XSSFCellStyle) {
+            XSSFFont font = ((XSSFCellStyle) cellStyle).getFont();
+            return font.getCTFont().toString();
+        }
+        return "";
     }
 
     /**
      * HSSFフォントの文字列表現を取得する
      * 
      * @param workbook ブック
-     * @param font フォント
+     * @param font     フォント
      * @return フォントの文字列表現
      */
-    private static String getHSSFFontString( HSSFWorkbook workbook, HSSFFont font) {
+    private static String getHSSFFontString(HSSFWorkbook workbook, HSSFFont font) {
         StringBuffer sb = new StringBuffer();
-        sb.append( "[FONT]");
-        sb.append( "fontheight=").append( Integer.toHexString( font.getFontHeight())).append( ",");
-        sb.append( "italic=").append( font.getItalic()).append( ",");
-        sb.append( "strikout=").append( font.getStrikeout()).append( ",");
-        sb.append( "colorpalette=").append( getHSSFColorString( ( HSSFWorkbook) workbook, font.getColor())).append( ",");
-        sb.append( "bold=").append( font.getBold()).append( ",");
-        sb.append( "supersubscript=").append( Integer.toHexString( font.getTypeOffset())).append( ",");
-        sb.append( "underline=").append( Integer.toHexString( font.getUnderline())).append( ",");
-        sb.append( "charset=").append( Integer.toHexString( font.getCharSet())).append( ",");
-        sb.append( "fontname=").append( font.getFontName());
-        sb.append( "[/FONT]");
+        sb.append("[FONT]");
+        sb.append("fontheight=").append(Integer.toHexString(font.getFontHeight())).append(",");
+        sb.append("italic=").append(font.getItalic()).append(",");
+        sb.append("strikout=").append(font.getStrikeout()).append(",");
+        sb.append("colorpalette=").append(getHSSFColorString((HSSFWorkbook) workbook, font.getColor())).append(",");
+        sb.append("boldweight=").append(font.getBold()).append(",");
+        sb.append("supersubscript=").append(Integer.toHexString(font.getTypeOffset())).append(",");
+        sb.append("underline=").append(Integer.toHexString(font.getUnderline())).append(",");
+        sb.append("charset=").append(Integer.toHexString(font.getCharSet())).append(",");
+        sb.append("fontname=").append(font.getFontName());
+        sb.append("[/FONT]");
         return sb.toString();
+    }
+
+    private static String getColorString(Workbook workbook, CellStyle cellStyle, ColorPosition position) {
+        if (cellStyle instanceof HSSFCellStyle) {
+            return getHSSFColorString((HSSFWorkbook) workbook, position.getColorIndex(cellStyle));
+        } else {
+            return getXSSFColorString(position.getXSSFColor(cellStyle));
+        }
     }
 
     /**
      * HSSF色の文字列表現を取得する
      * 
      * @param workbook ブック
-     * @param index 色インデックス
+     * @param index    色インデックス
      * @return HSSF色の文字列表現
      */
-    private static String getHSSFColorString( HSSFWorkbook workbook, short index) {
+    private static String getHSSFColorString(HSSFWorkbook workbook, short index) {
         HSSFPalette palette = workbook.getCustomPalette();
-        if ( palette.getColor( index) != null) {
-            HSSFColor color = palette.getColor( index);
+        if (palette.getColor(index) != null) {
+            HSSFColor color = palette.getColor(index);
             return color.getHexString();
         } else {
             return "";
         }
-    }
-
-    /**
-     * XSSFスタイルの文字列表現を取得する
-     * 
-     * @param cellStyle スタイル
-     * @return スタイルの文字列表現
-     */
-    private static String getCellStyleString( XSSFCellStyle cellStyle) {
-        StringBuffer sb = new StringBuffer();
-        if ( cellStyle != null) {
-            XSSFFont font = cellStyle.getFont();
-            sb.append( "Font=").append( font.getCTFont()).append( ",");
-            sb.append( "DataFormat=").append( cellStyle.getDataFormat()).append( ",");
-            sb.append( "DataFormatString=").append( cellStyle.getDataFormatString()).append( ",");
-            sb.append( "Hidden=").append( cellStyle.getHidden()).append( ",");
-            sb.append( "Locked=").append( cellStyle.getLocked()).append( ",");
-            sb.append( "Alignment=").append( cellStyle.getAlignmentEnum()).append( ",");
-            sb.append( "WrapText=").append( cellStyle.getWrapText()).append( ",");
-            sb.append( "VerticalAlignment=").append( cellStyle.getVerticalAlignmentEnum()).append( ",");
-            sb.append( "Rotation=").append( cellStyle.getRotation()).append( ",");
-            sb.append( "Indention=").append( cellStyle.getIndention()).append( ",");
-            sb.append( "BorderLeft=").append( cellStyle.getBorderLeftEnum()).append( ",");
-            sb.append( "BorderRight=").append( cellStyle.getBorderRightEnum()).append( ",");
-            sb.append( "BorderTop=").append( cellStyle.getBorderTopEnum()).append( ",");
-            sb.append( "BorderBottom=").append( cellStyle.getBorderBottomEnum()).append( ",");
-
-            sb.append( "LeftBorderColor=").append( getXSSFColorString( cellStyle.getLeftBorderXSSFColor())).append( ",");
-            sb.append( "RightBorderColor=").append( getXSSFColorString( cellStyle.getRightBorderXSSFColor())).append( ",");
-            sb.append( "TopBorderColor=").append( getXSSFColorString( cellStyle.getTopBorderXSSFColor())).append( ",");
-            sb.append( "BottomBorderColor=").append( getXSSFColorString( cellStyle.getBottomBorderXSSFColor())).append( ",");
-
-            sb.append( "FillPattern=").append( cellStyle.getFillPatternEnum()).append( ",");
-            try {
-                sb.append( "FillForegroundColor=").append( getXSSFColorString( cellStyle.getFillForegroundXSSFColor())).append( ",");
-            } catch ( NullPointerException e) {
-                // POI-3.7から例外が発生する
-                sb.append( "FillForegroundColor=none,");
-            }
-            
-            try {
-                sb.append( "FillBackgroundColor=").append( getXSSFColorString( cellStyle.getFillBackgroundXSSFColor()));
-            } catch ( NullPointerException e) {
-                // POI-3.7から例外が発生する
-                sb.append( "FillBackgroundColor=none,");
-            }
-        }
-        return sb.toString();
     }
 
     /**
@@ -607,22 +590,22 @@ public class ReportsTestUtil {
      * @param color XSSF色
      * @return XSSF色の文字列表現
      */
-    private static String getXSSFColorString( XSSFColor color) {
-        StringBuffer sb = new StringBuffer( "[");
-        if ( color != null) {
-            sb.append( "Indexed=").append( color.getIndexed()).append( ",");
-            sb.append( "Rgb=");
-            if ( color.getRGB() != null) {
-                for ( byte b : color.getRGB()) {
-                    sb.append( String.format( "%02x", b).toUpperCase());
+    private static String getXSSFColorString(XSSFColor color) {
+        StringBuffer sb = new StringBuffer("[");
+        if (color != null) {
+            sb.append("Indexed=").append(color.getIndexed()).append(",");
+            sb.append("Rgb=");
+            if (color.getRGB() != null) {
+                for (byte b : color.getRGB()) {
+                    sb.append(String.format("%02x", b).toUpperCase());
                 }
             }
-            sb.append( ",");
-            sb.append( "Tint=").append( color.getTint()).append( ",");
-            sb.append( "Theme=").append( color.getTheme()).append( ",");
-            sb.append( "Auto=").append( color.isAuto());
+            sb.append(",");
+            sb.append("Tint=").append(color.getTint()).append(",");
+            sb.append("Theme=").append(color.getTheme()).append(",");
+            sb.append("Auto=").append(color.isAuto());
         }
-        return sb.append( "]").toString();
+        return sb.append("]").toString();
     }
 
     /**
