@@ -17,22 +17,25 @@
  * limitations under the License.
  * #L%
  */
-
 package org.bbreak.excella.reports.listener;
 
-import org.bbreak.excella.core.listener.SheetParseListener;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.bbreak.excella.reports.model.ReportBook;
 
 /**
- * レポート作成処理の下記のタイミングで任意の処理を差し込むためのインターフェイス
- * <ul>
- * <li>ブック処理前</li>
- * <li>シート処理前(パラメータ置換前)</li>
- * <li>シート処理後(パラメータ置換後)</li>
- * <li>ブック処理後</li>
- * </ul>
+ * ブック処理後に差し込む処理を示すインタフェース
  * 
- * @version 1.0
+ * @since 2.2
  */
-public interface ReportProcessListener extends SheetParseListener, PreBookParseListener, PostBookParseListener {
+@FunctionalInterface
+public interface PostBookParseListener {
+
+    /**
+     * ブック処理後に呼び出されるメソッド
+     * 
+     * @param workbook 書き込み対象のブック
+     * @param reportBook 処理対象の{@link ReportBook}
+     */
+    void postBookParse( Workbook workbook, ReportBook reportBook);
 
 }
