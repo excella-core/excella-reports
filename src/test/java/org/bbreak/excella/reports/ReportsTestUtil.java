@@ -382,7 +382,8 @@ public class ReportsTestUtil {
         // セル単位のチェック
         // ----------------------
 
-        if ( expected == null && actual == null) {
+        // 期待値がnullかつ実測値が空の場合は許容する。
+        if ( expected == null && (actual == null || actual.getCellType() == CellType.BLANK)) {
             return;
         }
 
