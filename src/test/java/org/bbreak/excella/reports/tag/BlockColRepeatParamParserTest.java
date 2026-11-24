@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -679,6 +680,42 @@ public class BlockColRepeatParamParserTest extends ReportsWorkbookTest {
         }
         
         checkSheet( "sheet24", sheet24, true);
+    }
+
+    @Test
+    public void testNestedBlockRowShiftsCellsBelowBlockOnce() throws ParseException, IOException {
+        try ( InputStream templateStream = getClass().getResourceAsStream( "BlockColRepeatParamParser_issue66" + getSuffix());
+                Workbook workbook = WorkbookFactory.create( templateStream);
+                InputStream expectedStream = getClass().getResourceAsStream( "BlockColRepeatParamParser_issue66_expected" + getSuffix());
+                Workbook expectedWorkbook = WorkbookFactory.create( expectedStream)) {
+            Sheet sheet = workbook.getSheet( "nested-block-row");
+
+            ParamInfo firstItem = new ParamInfo();
+            firstItem.addParam( SingleParamParser.DEFAULT_TAG, "text", "item1");
+            ParamInfo secondItem = new ParamInfo();
+            secondItem.addParam( SingleParamParser.DEFAULT_TAG, "text", "item2");
+            ParamInfo thirdItem = new ParamInfo();
+            thirdItem.addParam( SingleParamParser.DEFAULT_TAG, "text", "item3");
+
+            ParamInfo block = new ParamInfo();
+            block.addParam( BlockRowRepeatParamParser.DEFAULT_TAG, "details", new ParamInfo[] {firstItem, secondItem, thirdItem});
+            ParamInfo paramInfo = new ParamInfo();
+            paramInfo.addParam( BlockColRepeatParamParser.DEFAULT_TAG, "blocks", new ParamInfo[] {block});
+
+            ReportBook reportBook = new ReportBook( "", "test", new ConvertConfiguration[] {});
+            reportBook.addReportSheet( new ReportSheet( "nested-block-row"));
+            ReportsParserInfo reportsParserInfo = new ReportsParserInfo();
+            reportsParserInfo.setReportParsers( new ArrayList<ReportsTagParser<?>>( ReportCreateHelper.createDefaultParsers().values()));
+            reportsParserInfo.setReportBook( reportBook);
+            reportsParserInfo.setParamInfo( paramInfo);
+
+            new BlockColRepeatParamParser().parse( sheet, sheet.getRow( 0).getCell( 0), reportsParserInfo);
+
+            assertEquals( "Right-side shift inserted extra rows", 8, sheet.getLastRowNum());
+            assertEquals( "Right-side value is not aligned below the expanded block", "RIGHT", sheet.getRow( 8).getCell( 3).getStringCellValue());
+            assertEquals( "Right-side row height changed", 37f, sheet.getRow( 8).getHeightInPoints(), 0.01f);
+            checkSheet( expectedWorkbook, "nested-block-row", sheet, true);
+        }
     }
     
     

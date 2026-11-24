@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -780,6 +781,70 @@ public class BlockRowRepeatParamParserTest  extends ReportsWorkbookTest {
         Workbook expectedWorkbook = WorkbookFactory.create( //
             getClass().getResourceAsStream( "BlockRowRepeatParamParser_formulas_expected" + getSuffix()));
         checkSheet( expectedWorkbook, "issue-57", sheet, true);
+    }
+
+    @Test
+    public void testIssue66MultipleRepeatsPreserveRowsBelowBlock() throws ParseException, IOException {
+        try ( InputStream templateStream = getClass().getResourceAsStream( "BlockRowRepeatParamParser_issue66" + getSuffix());
+                Workbook workbook = WorkbookFactory.create( templateStream);
+                InputStream expectedStream = getClass().getResourceAsStream( "BlockRowRepeatParamParser_issue66_expected" + getSuffix());
+                Workbook expectedWorkbook = WorkbookFactory.create( expectedStream)) {
+            Sheet sheet = workbook.getSheet( "multiple-repeats");
+            ParamInfo firstItem = new ParamInfo();
+            firstItem.addParam( SingleParamParser.DEFAULT_TAG, "text", "item1");
+            ParamInfo secondItem = new ParamInfo();
+            secondItem.addParam( SingleParamParser.DEFAULT_TAG, "text", "item2");
+            ParamInfo thirdItem = new ParamInfo();
+            thirdItem.addParam( SingleParamParser.DEFAULT_TAG, "text", "item3");
+
+            ParamInfo paramInfo = new ParamInfo();
+            paramInfo.addParam( BlockRowRepeatParamParser.DEFAULT_TAG, "details", new ParamInfo[] {firstItem, secondItem, thirdItem});
+
+            new BlockRowRepeatParamParser().parse( sheet, sheet.getRow( 0).getCell( 0), createReportsParserInfo( paramInfo, "multiple-repeats"));
+
+            assertEquals( "Repeated block inserted unexpected rows", 6, sheet.getLastRowNum());
+            assertEquals( "Row 5 height changed", 85.5f, sheet.getRow( 4).getHeightInPoints(), 0.01f);
+            assertEquals( "Row 6 height changed", 21f, sheet.getRow( 5).getHeightInPoints(), 0.01f);
+            assertEquals( "Row 7 height changed", 75f, sheet.getRow( 6).getHeightInPoints(), 0.01f);
+            assertEquals( "Right-side cell was not shifted to C7", "*", sheet.getRow( 6).getCell( 2).getStringCellValue());
+            checkSheet( expectedWorkbook, "multiple-repeats", sheet, true);
+        }
+    }
+
+    @Test
+    public void testIssue66ChildRowExpansionPreservesRowsBelowBlock() throws ParseException, IOException {
+        try ( InputStream templateStream = getClass().getResourceAsStream( "BlockRowRepeatParamParser_issue66" + getSuffix());
+                Workbook workbook = WorkbookFactory.create( templateStream);
+                InputStream expectedStream = getClass().getResourceAsStream( "BlockRowRepeatParamParser_issue66_expected" + getSuffix());
+                Workbook expectedWorkbook = WorkbookFactory.create( expectedStream)) {
+            Sheet sheet = workbook.getSheet( "child-row-expansion");
+            ParamInfo detail = new ParamInfo();
+            detail.addParam( RowRepeatParamParser.DEFAULT_TAG, "items", new Object[] {"item1", "item2", "item3"});
+
+            ParamInfo paramInfo = new ParamInfo();
+            paramInfo.addParam( BlockRowRepeatParamParser.DEFAULT_TAG, "details", new ParamInfo[] {detail});
+
+            new BlockRowRepeatParamParser().parse( sheet, sheet.getRow( 0).getCell( 0), createReportsParserInfo( paramInfo, "child-row-expansion"));
+
+            assertEquals( "Child row expansion inserted unexpected rows", 6, sheet.getLastRowNum());
+            assertEquals( "Row 5 height changed", 85.5f, sheet.getRow( 4).getHeightInPoints(), 0.01f);
+            assertEquals( "Row 6 height changed", 21f, sheet.getRow( 5).getHeightInPoints(), 0.01f);
+            // The last row height is not asserted because nested $R[] column splitting remains a separate issue.
+            assertEquals( "Right-side cell was not shifted to C7", "*", sheet.getRow( 6).getCell( 2).getStringCellValue());
+            checkSheet( expectedWorkbook, "child-row-expansion", sheet, true);
+        }
+    }
+
+    private ReportsParserInfo createReportsParserInfo( ParamInfo paramInfo, String sheetName) {
+        ReportBook reportBook = new ReportBook( "", "test", new ConvertConfiguration[] {});
+        ReportSheet reportSheet = new ReportSheet( sheetName);
+        reportBook.addReportSheet( reportSheet);
+
+        ReportsParserInfo reportsParserInfo = new ReportsParserInfo();
+        reportsParserInfo.setReportParsers( new ArrayList<ReportsTagParser<?>>( ReportCreateHelper.createDefaultParsers().values()));
+        reportsParserInfo.setReportBook( reportBook);
+        reportsParserInfo.setParamInfo( paramInfo);
+        return reportsParserInfo;
     }
 
 }

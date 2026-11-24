@@ -491,6 +491,17 @@ public class BlockColRepeatParamParser extends ReportsTagParser<Object[]> {
                                 }
                             }
                         }
+                        // 子BR/BCが lastColNum までシフトした分を、親ブロック右側から取り消す
+                        // （右側の縦シフトは親の末尾補正で1回だけ行う）
+                        if ( (parser instanceof BlockRowRepeatParamParser || parser instanceof BlockColRepeatParamParser)
+                                && result.getRowIndex() > result.getDefaultRowIndex()) {
+                            int lastColNum = PoiUtil.getLastColNum( sheet);
+                            if ( blockEndColIndex + 1 <= lastColNum) {
+                                PoiUtil.deleteRangeUp( sheet, new CellRangeAddress(
+                                    result.getDefaultRowIndex() + 1, result.getRowIndex(),
+                                    blockEndColIndex + 1, lastColNum));
+                            }
+                        }
                         // 列ループ終わり
                     }
                     // 処理行に横に増えたセルを挿入する

@@ -484,15 +484,6 @@ public class BlockRowRepeatParamParser extends ReportsTagParser<Object[]> {
 
                     // 行ループ終わり
                 }
-                // ブロック最終列以降に縦に伸びた分のセルを挿入する
-                int lastColNum = PoiUtil.getLastColNum( sheet);
-                if ( (maxblockEndRowIndex + 1) <= blockEndRowIndex && (blockEndColIndex + 1) <= lastColNum) {
-                    CellRangeAddress rearRangeAddress = new CellRangeAddress( maxblockEndRowIndex + 1, blockEndRowIndex, blockEndColIndex + 1, lastColNum);
-                    PoiUtil.insertRangeDown( sheet, rearRangeAddress);
-                    if ( log.isDebugEnabled()) {
-                        log.debug( "挿入範囲2 : " + (maxblockEndRowIndex + 1) + ":" + blockEndRowIndex + ":" + (blockEndColIndex + 1) + ":" + lastColNum);
-                    }
-                }
                 maxblockEndRowIndex = blockEndRowIndex;
             }
 
